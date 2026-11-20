@@ -1,5 +1,6 @@
 Options -Indexes
 RedirectMatch 404 /\.(git|gitignore)
+RedirectMatch 404 ^/_src/
 ErrorDocument 404 /404.html
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
