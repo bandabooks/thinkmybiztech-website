@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Generates the Think Mybiz Tech static site into ../site from shared templates."""
-import os, datetime, json, urllib.parse
+import os, datetime, json, urllib.parse, hashlib
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")  # repo root = public_html
 DOMAIN = "https://thinkmybiztech.com"
@@ -12,11 +12,14 @@ WA_NUMBER = "27636215642"       # WhatsApp click-to-chat (wa.me format, no +)
 WA_TEXT = "Hello Think Mybiz Tech, I'd like to discuss a project."
 WA_URL = "https://wa.me/" + WA_NUMBER + "?text=" + urllib.parse.quote(WA_TEXT)
 ADDRESS = "48 Rabe Street, Mokopane, Limpopo"
+# Cache-busting: asset URLs carry a content hash so browsers never pair new HTML with old CSS/JS.
+def _ver(rel): return hashlib.sha1(open(os.path.join(OUT, rel), "rb").read()).hexdigest()[:10]
+CSS_V, JS_V = _ver("assets/css/style.css"), _ver("assets/js/main.js")
 OG_IMAGE = DOMAIN + "/assets/img/og-default.png"
 # Social profiles: add the real profile URL to switch a link on (footer + schema sameAs). Empty = hidden.
 SOCIAL = [("LinkedIn", ""), ("Facebook", ""), ("Instagram", ""), ("X", ""), ("YouTube", "")]
 SOCIAL_LIVE = [(n, u) for n, u in SOCIAL if u]
-WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>'
+WA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>'
 
 ORG_LD = {
   "@context": "https://schema.org",
@@ -93,7 +96,7 @@ FOOTER = f"""<footer class="site-footer"><div class="container">
 <button class="btn btn-primary" style="width:100%;justify-content:center" data-checkout>Proceed to checkout</button>
 <p style="font-size:.8rem;color:#6a7891;margin-top:10px">Secure checkout is hosted by Hostinger Ecommerce.</p></footer></aside>
 <a class="wa-float" href="{WA_URL}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" data-track="whatsapp">{WA_SVG}<span>WhatsApp us</span></a>
-<script src="/assets/js/main.js" defer></script>"""
+<script src="/assets/js/main.js?v={JS_V}" defer></script>"""
 
 def head(title, desc, canon, noindex=False, og_type="website", og_image=OG_IMAGE, extra=""):
     return f"""<!DOCTYPE html><html lang="en-ZA"><head><meta charset="utf-8">
@@ -105,7 +108,7 @@ def head(title, desc, canon, noindex=False, og_type="website", og_image=OG_IMAGE
 <meta property="og:image" content="{og_image}"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#06132b">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/img/logo-512.png">
 <link rel="preload" href="/assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css">{extra}
+<link rel="stylesheet" href="/assets/css/style.css?v={CSS_V}">{extra}
 </head>"""
 
 def page(path, title, desc, body, active="", page_id="", noindex=False, schema=None):

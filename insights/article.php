@@ -31,7 +31,7 @@ $schema = $ok ? json_encode(['@context' => 'https://schema.org', '@type' => 'Blo
 <meta property="og:image" content="<?= $e($ogimg) ?>"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#06132b">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/img/logo-512.png">
 <link rel="preload" href="/assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css"><?php if ($ok): ?><script type="application/ld+json"><?= $schema ?></script><?php endif; ?>
+<link rel="stylesheet" href="/assets/css/style.css?v=9fbab5059d"><?php if ($ok): ?><script type="application/ld+json"><?= $schema ?></script><?php endif; ?>
 </head><body data-page="article"><header class="site-header"><div class="container nav">
 <a class="brand" href="/" aria-label="Think Mybiz Tech home"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#fff"/>
 <path d="M11 12.5h18v4.2h-6.8V29h-4.4V16.7H11z" fill="#0a1d3f"/><circle cx="12.5" cy="25" r="2.2" fill="#2f6df6"/><circle cx="27.5" cy="25" r="2.2" fill="#19c3a5"/></svg><span class="brand-text"><strong>THINK MYBIZ</strong><span>TECH</span></span></a>
@@ -71,5 +71,5 @@ $schema = $ok ? json_encode(['@context' => 'https://schema.org', '@type' => 'Blo
 <div class="items"></div><footer><div class="total"><span>Total</span><span>—</span></div>
 <button class="btn btn-primary" style="width:100%;justify-content:center" data-checkout>Proceed to checkout</button>
 <p style="font-size:.8rem;color:#6a7891;margin-top:10px">Secure checkout is hosted by Hostinger Ecommerce.</p></footer></aside>
-<a class="wa-float" href="https://wa.me/27636215642?text=Hello%20Think%20Mybiz%20Tech%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" data-track="whatsapp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg><span>WhatsApp us</span></a>
-<script src="/assets/js/main.js" defer></script></body></html>
+<a class="wa-float" href="https://wa.me/27636215642?text=Hello%20Think%20Mybiz%20Tech%2C%20I%27d%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" data-track="whatsapp"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg><span>WhatsApp us</span></a>
+<script src="/assets/js/main.js?v=f7bbdcbfc8" defer></script></body></html>
