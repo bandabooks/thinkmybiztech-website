@@ -2,7 +2,25 @@ Options -Indexes
 RedirectMatch 404 /\.(git|gitignore)
 RedirectMatch 404 ^/_src/
 ErrorDocument 404 /404.html
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# One canonical host
+RewriteCond %{HTTP_HOST} ^www\.thinkmybiztech\.com$ [NC]
+RewriteRule ^(.*)$ https://thinkmybiztech.com/$1 [R=301,L]
+# Legacy article links /insights/post/?slug=x -> /insights/x/
+RewriteCond %{QUERY_STRING} (^|&)slug=([a-z0-9-]+)
+RewriteRule ^insights/post/?$ /insights/%2/? [R=301,L]
+RewriteRule ^insights/post/?$ /insights/ [R=301,L]
+# Server-rendered articles and their sitemap
+RewriteRule ^sitemap-insights\.xml$ api/sitemap-insights.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^insights/([a-z0-9-]+)/?$ insights/article.php?slug=$1 [L,QSA]
+# Include-only library
+RewriteRule ^api/cms\.php$ - [F,L]
+</IfModule>
 <IfModule mod_headers.c>
+Header always set Strict-Transport-Security "max-age=31536000"
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set X-Frame-Options "SAMEORIGIN"
@@ -13,4 +31,6 @@ ExpiresActive On
 ExpiresByType text/css "access plus 7 days"
 ExpiresByType application/javascript "access plus 7 days"
 ExpiresByType image/svg+xml "access plus 30 days"
+ExpiresByType image/png "access plus 30 days"
+ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>

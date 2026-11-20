@@ -168,10 +168,10 @@
   function postCard(p) {
     var img = p._embedded && p._embedded["wp:featuredmedia"] && p._embedded["wp:featuredmedia"][0] && p._embedded["wp:featuredmedia"][0].source_url;
     var c = el("article", "card post-card");
-    c.innerHTML = "<a class='thumb' href='/insights/post/?slug=" + encodeURIComponent(p.slug) + "' aria-hidden='true' tabindex='-1'>" +
+    c.innerHTML = "<a class='thumb' href='/insights/" + encodeURIComponent(p.slug) + "/' aria-hidden='true' tabindex='-1'>" +
       (img ? "<img loading='lazy' alt='' src='" + esc(img) + "'>" : "") + "</a><div class='body'><div class='meta'>" + fmtDate(p.date) +
-      "</div><h3><a href='/insights/post/?slug=" + encodeURIComponent(p.slug) + "'>" + p.title.rendered + "</a></h3><div class='excerpt'>" +
-      String(p.excerpt.rendered).replace(/<[^>]+>/g, "").slice(0, 180) + "</div><a href='/insights/post/?slug=" + encodeURIComponent(p.slug) + "'>Read article →</a></div>";
+      "</div><h3><a href='/insights/" + encodeURIComponent(p.slug) + "/'>" + p.title.rendered + "</a></h3><div class='excerpt'>" +
+      String(p.excerpt.rendered).replace(/<[^>]+>/g, "").slice(0, 180) + "</div><a href='/insights/" + encodeURIComponent(p.slug) + "/'>Read article →</a></div>";
     return c;
   }
   document.querySelectorAll("[data-posts]").forEach(function (box) {
@@ -197,30 +197,35 @@
     if (more) more.addEventListener("click", function () { page++; load(); });
     load();
   });
-  var article = document.getElementById("article");
-  if (article) {
-    var slug = new URLSearchParams(location.search).get("slug");
-    if (!slug) { location.href = "/insights/"; return; }
-    getJSON(CMS + "/posts?slug=" + encodeURIComponent(slug) + "&_embed").then(function (r) {
-      var p = list(r.json)[0];
-      if (!p) { article.innerHTML = "<p class='notice'>That article could not be found. <a href='/insights/'>View all insights</a>.</p>"; return; }
-      var tmp = el("div"); tmp.innerHTML = p.title.rendered;
-      document.title = tmp.textContent + " | Think Mybiz Tech";
-      article.innerHTML = "<a href='/insights/'>← All insights</a><h1 style='margin-top:14px'>" + p.title.rendered + "</h1><div class='meta'>" +
-        fmtDate(p.date) + "</div><div class='content'>" + p.content.rendered + "</div>";
-    }).catch(function () { article.innerHTML = "<p class='notice'>This article is temporarily unavailable.</p>"; });
-  }
-
-  /* ---------- Contact form → email compose ---------- */
+  /* ---------- Contact form → /api/enquiry.php (stored + emailed server-side) ---------- */
   var form = document.getElementById("enquiry");
-  if (form) form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var f = new FormData(form), lines = [];
-    ["name", "company", "email", "phone", "service", "budget", "message"].forEach(function (k) {
-      if (f.get(k)) lines.push(k.charAt(0).toUpperCase() + k.slice(1) + ": " + f.get(k));
+  if (form) {
+    var ts = document.getElementById("ts"), pg = document.getElementById("page");
+    if (ts) ts.value = String(Date.now());
+    if (pg) pg.value = location.pathname + location.search;
+    var okBox = document.getElementById("enquiry-ok"), errBox = document.getElementById("enquiry-err");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      errBox.style.display = "none";
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var btn = form.querySelector("button[type=submit]"), label = btn.textContent;
+      btn.disabled = true; btn.textContent = "Sending…";
+      fetch(form.action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }).then(function (j) { j.status = r.status; return j; }); })
+        .then(function (j) {
+          if (!j.ok) throw j;
+          Array.prototype.forEach.call(form.children, function (x) { if (x !== okBox) x.style.display = "none"; });
+          okBox.innerHTML = "<strong>Thank you — your enquiry has been received.</strong><br>Reference <strong>" + esc(j.ref || "") +
+            "</strong>. We'll be in touch, normally within one business day. For anything urgent, WhatsApp or call 063 621 5642.";
+          okBox.style.display = "";
+          okBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        })
+        .catch(function (j) {
+          errBox.innerHTML = esc((j && j.error) || "We couldn't send your enquiry just now.") +
+            " You can also email <a href='mailto:info@thinkmybiztech.com'>info@thinkmybiztech.com</a> or <a href='https://wa.me/27636215642' target='_blank' rel='noopener'>WhatsApp us</a>.";
+          errBox.style.display = "";
+        })
+        .then(function () { btn.disabled = false; btn.textContent = label; });
     });
-    var subj = "Project enquiry — " + (f.get("company") || f.get("name") || "website");
-    window.location.href = "mailto:info@thinkmybiztech.com?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(lines.join("\n"));
-    var ok = document.getElementById("enquiry-ok"); if (ok) ok.style.display = "";
-  });
+  }
 })();

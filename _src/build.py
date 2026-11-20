@@ -1,13 +1,43 @@
 #!/usr/bin/env python3
 """Generates the Think Mybiz Tech static site into ../site from shared templates."""
-import os, datetime
+import os, datetime, json, urllib.parse
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")  # repo root = public_html
 DOMAIN = "https://thinkmybiztech.com"
+CMS = "https://cms.thinkmybiztech.com"
 EMAIL = "info@thinkmybiztech.com"
-PHONE = "066 210 5631"
-TEL = "+27662105631"
+PHONE = "063 621 5642"          # official contact number (MF Banda, 20/11/2026)
+TEL = "+27636215642"
+WA_NUMBER = "27636215642"       # WhatsApp click-to-chat (wa.me format, no +)
+WA_TEXT = "Hello Think Mybiz Tech, I'd like to discuss a project."
+WA_URL = "https://wa.me/" + WA_NUMBER + "?text=" + urllib.parse.quote(WA_TEXT)
 ADDRESS = "48 Rabe Street, Mokopane, Limpopo"
+OG_IMAGE = DOMAIN + "/assets/img/og-default.png"
+# Social profiles: add the real profile URL to switch a link on (footer + schema sameAs). Empty = hidden.
+SOCIAL = [("LinkedIn", ""), ("Facebook", ""), ("Instagram", ""), ("X", ""), ("YouTube", "")]
+SOCIAL_LIVE = [(n, u) for n, u in SOCIAL if u]
+WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>'
+
+ORG_LD = {
+  "@context": "https://schema.org",
+  "@type": ["Organization", "ProfessionalService"],
+  "@id": DOMAIN + "/#org",
+  "name": "Think Mybiz Tech",
+  "url": DOMAIN + "/",
+  "logo": DOMAIN + "/assets/img/logo-512.png",
+  "image": OG_IMAGE,
+  "description": "South African software engineering and business automation company: custom applications, Progressive Web Apps, databases, websites, AI and compliance systems, and the makers of Taxnify.",
+  "email": EMAIL,
+  "telephone": TEL,
+  "address": {"@type": "PostalAddress", "streetAddress": "48 Rabe Street", "addressLocality": "Mokopane",
+              "addressRegion": "Limpopo", "addressCountry": "ZA"},
+  "areaServed": {"@type": "Country", "name": "South Africa"},
+  "founder": {"@type": "Person", "name": "MF Banda"},
+  "contactPoint": [{"@type": "ContactPoint", "contactType": "sales", "telephone": TEL, "email": EMAIL,
+                    "areaServed": "ZA", "availableLanguage": ["English"]}],
+}
+if SOCIAL_LIVE: ORG_LD["sameAs"] = [u for _, u in SOCIAL_LIVE]
+def ld(obj): return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
 
 LOGO = """<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#fff"/>
 <path d="M11 12.5h18v4.2h-6.8V29h-4.4V16.7H11z" fill="#0a1d3f"/><circle cx="12.5" cy="25" r="2.2" fill="#2f6df6"/><circle cx="27.5" cy="25" r="2.2" fill="#19c3a5"/></svg>"""
@@ -45,13 +75,14 @@ def header(active):
 <li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/" style="color:#fff">Start a project</a></li></ul>
 </div></header>"""
 
+SOCIAL_HTML = ('<div class="social">' + "".join(f'<a href="{u}" target="_blank" rel="noopener me">{n}</a>' for n, u in SOCIAL_LIVE) + "</div>") if SOCIAL_LIVE else ""
 FOOTER = f"""<footer class="site-footer"><div class="container">
 <div class="footer-grid">
 <div><a class="brand" href="/">{LOGO}<span class="brand-text"><strong>THINK MYBIZ</strong><span>TECH</span></span></a>
-<p style="margin-top:14px;max-width:320px">South African software engineering and business automation. Build · Automate · Integrate · Grow.</p></div>
+<p style="margin-top:14px;max-width:320px">South African software engineering and business automation. Build · Automate · Integrate · Grow.</p>{SOCIAL_HTML}</div>
 <div><h4>Company</h4><ul><li><a href="/about/">About</a></li><li><a href="/how-we-work/">How we work</a></li><li><a href="/insights/">Insights</a></li><li><a href="/privacy/">Privacy &amp; POPIA</a></li></ul></div>
 <div><h4>What we do</h4><ul><li><a href="/services/">Services</a></li><li><a href="/solutions/">Industry solutions</a></li><li><a href="/taxnify/">Taxnify platform</a></li><li><a href="/pricing/">Engagements &amp; pricing</a></li></ul></div>
-<div><h4>Contact</h4><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="tel:{TEL}">{PHONE}</a></li><li>{ADDRESS}</li></ul></div>
+<div><h4>Contact</h4><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="tel:{TEL}">{PHONE}</a></li><li><a href="{WA_URL}" target="_blank" rel="noopener">WhatsApp {PHONE}</a></li><li>{ADDRESS}</li></ul></div>
 </div>
 <div class="footer-bottom"><span>© <span id="year">2026</span> Think Mybiz Tech. All rights reserved.</span>
 <span>Formal proposals and agreements identify the contracting legal entity and applicable commercial terms.</span></div>
@@ -61,21 +92,26 @@ FOOTER = f"""<footer class="site-footer"><div class="container">
 <div class="items"></div><footer><div class="total"><span>Total</span><span>—</span></div>
 <button class="btn btn-primary" style="width:100%;justify-content:center" data-checkout>Proceed to checkout</button>
 <p style="font-size:.8rem;color:#6a7891;margin-top:10px">Secure checkout is hosted by Hostinger Ecommerce.</p></footer></aside>
+<a class="wa-float" href="{WA_URL}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" data-track="whatsapp">{WA_SVG}<span>WhatsApp us</span></a>
 <script src="/assets/js/main.js" defer></script>"""
 
-def page(path, title, desc, body, active="", page_id="", noindex=False):
-    canon = DOMAIN + path
-    html = f"""<!DOCTYPE html><html lang="en-ZA"><head><meta charset="utf-8">
+def head(title, desc, canon, noindex=False, og_type="website", og_image=OG_IMAGE, extra=""):
+    return f"""<!DOCTYPE html><html lang="en-ZA"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><meta name="description" content="{desc}">
 <link rel="canonical" href="{canon}">{'<meta name="robots" content="noindex">' if noindex else ''}
-<meta property="og:type" content="website"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
-<meta property="og:url" content="{canon}"><meta property="og:site_name" content="Think Mybiz Tech"><meta name="theme-color" content="#06132b">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css">
-</head><body data-page="{page_id}">{header(active)}<main>{body}</main>{FOOTER}</body></html>"""
+<meta property="og:type" content="{og_type}"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
+<meta property="og:url" content="{canon}"><meta property="og:site_name" content="Think Mybiz Tech"><meta property="og:locale" content="en_ZA">
+<meta property="og:image" content="{og_image}"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#06132b">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/img/logo-512.png">
+<link rel="preload" href="/assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/style.css">{extra}
+</head>"""
+
+def page(path, title, desc, body, active="", page_id="", noindex=False, schema=None):
+    canon = DOMAIN + path
+    extra = "".join(ld(o) for o in (schema or []))
+    html = head(title, desc, canon, noindex, extra=extra) + f"""<body data-page="{page_id}">{header(active)}<main>{body}</main>{FOOTER}</body></html>"""
     fp = os.path.join(OUT, path.strip("/"), "index.html") if path.endswith("/") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(fp), exist_ok=True)
     open(fp, "w").write(html)
@@ -89,6 +125,7 @@ def hero(eyebrow, h1, lead, actions=True, cls="page-hero"):
 def cta(h="Have a process that should run itself?", p="Tell us about the process you want to automate or the application you need. We respond with a practical proposal."):
     return f"""<section class="section"><div class="container"><div class="cta"><h2>{h}</h2><p>{p}</p>
 <div class="hero-actions"><a class="btn btn-primary" href="/contact/" style="background:#fff;color:#0a1d3f">Start a conversation</a>
+<a class="btn btn-wa" href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp">WhatsApp us</a>
 <a class="btn btn-ghost" href="tel:{TEL}">Call {PHONE}</a></div></div></div></section>"""
 
 SERVICES = [
@@ -235,7 +272,8 @@ build client applications on, so every custom solution starts with secure sign-i
 {cta()}
 """
 pages.append(page("/", "Think Mybiz Tech | Custom Software, PWAs & Business Automation — South Africa",
-  "South African software engineering and business automation company. Custom applications, Progressive Web Apps, databases, websites, AI and compliance systems — and the makers of Taxnify.", home, "/", "home"))
+  "South African software engineering and business automation company. Custom applications, Progressive Web Apps, databases, websites, AI and compliance systems — and the makers of Taxnify.", home, "/", "home",
+  schema=[ORG_LD, {"@context":"https://schema.org","@type":"WebSite","@id":DOMAIN+"/#website","url":DOMAIN+"/","name":"Think Mybiz Tech","publisher":{"@id":DOMAIN+"/#org"},"inLanguage":"en-ZA"}]))
 
 # ---------- Services ----------
 svc = hero("What we do","Our services","Services can be commissioned as a complete solution or combined into a phased digital transformation programme — from the first process review to a live, supported application.") + f"""
@@ -290,7 +328,10 @@ so custom solutions start with secure sign-in, permissions, audit trails and fin
 <div class="card">{icon("code")}<h3>Build on the foundation</h3><p>Custom applications built on Taxnify's secure core — sign-in, permissions, audit trails and accounting accuracy from day one.</p></div>
 </div></div></section>{cta("Ready to see Taxnify in your business?","Subscribe online or ask us to configure and integrate it with the way you work.")}"""
 pages.append(page("/taxnify/","Taxnify | Business & Compliance Operating System by Think Mybiz Tech",
-  "Taxnify is Think Mybiz Tech's proprietary South African accounting, tax, payroll, POS and compliance platform — available by subscription and as the foundation for custom applications.", tx, "/taxnify/"))
+  "Taxnify is Think Mybiz Tech's proprietary South African accounting, tax, payroll, POS and compliance platform — available by subscription and as the foundation for custom applications.", tx, "/taxnify/",
+  schema=[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Taxnify","applicationCategory":"BusinessApplication",
+   "operatingSystem":"Web browser","url":"https://www.taxnify.co.za","description":"South African accounting, tax, payroll, point of sale and compliance platform.",
+   "publisher":{"@type":"Organization","name":"Think Mybiz Tech","url":DOMAIN+"/"}}]))
 
 # ---------- How we work ----------
 hw = hero("Delivery &amp; collaboration","From business problem to working solution","Our delivery process keeps requirements visible, decisions documented and releases controlled. Nothing goes live without your approval.") + f"""
@@ -327,8 +368,50 @@ ins = hero("Insights","Software, automation and compliance — practical thinkin
 <section class="section"><div class="container"><div class="grid g3" data-posts="9"><p class="loading">Loading articles…</p></div>
 <p style="text-align:center;margin-top:30px"><button class="btn btn-outline" data-more-posts style="display:none">Load more</button></p></div></section>"""
 pages.append(page("/insights/","Insights | Think Mybiz Tech","Articles on custom software, business automation, Progressive Web Apps and compliance for South African businesses.", ins, "/insights/"))
-pages.append(page("/insights/post/","Insights | Think Mybiz Tech","Article from Think Mybiz Tech.",
-  '<section class="section"><div class="container"><div class="article" id="article"><p class="loading">Loading article…</p></div></div></section>', "/insights/"))
+
+# Articles are server-rendered by PHP at /insights/<slug>/ (rewrite in .htaccess) so search engines index them on this domain.
+ARTICLE_PHP = r"""<?php
+/* GENERATED by _src/build.py — do not hand-edit. Renders a WordPress post from the headless CMS as a full, indexable page. */
+declare(strict_types=1);
+require __DIR__ . '/../api/cms.php';
+$slug = preg_replace('/[^a-z0-9-]/', '', strtolower((string)($_GET['slug'] ?? '')));
+$post = $slug !== '' ? tmbt_cms_post($slug) : null;
+$e = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+if ($post === false) { http_response_code(503); header('Retry-After: 120'); }
+elseif ($post === null) { http_response_code(404); }
+$ok = is_array($post);
+$title = $ok ? html_entity_decode(strip_tags($post['title']['rendered']), ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($post === false ? 'Article temporarily unavailable' : 'Article not found');
+$desc = $ok ? mb_substr(trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($post['excerpt']['rendered']), ENT_QUOTES | ENT_HTML5, 'UTF-8'))), 0, 158) : 'Insights from Think Mybiz Tech.';
+$canon = 'https://thinkmybiztech.com/insights/' . $slug . '/';
+$img = $ok ? ($post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? '') : '';
+$ogimg = $img !== '' ? $img : '%%OG%%';
+$date = $ok ? substr((string)$post['date'], 0, 10) : '';
+$schema = $ok ? json_encode(['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $title, 'description' => $desc,
+  'datePublished' => $post['date_gmt'] . 'Z', 'dateModified' => $post['modified_gmt'] . 'Z', 'mainEntityOfPage' => $canon, 'image' => $ogimg,
+  'author' => ['@type' => 'Organization', 'name' => 'Think Mybiz Tech', 'url' => 'https://thinkmybiztech.com/'],
+  'publisher' => ['@id' => 'https://thinkmybiztech.com/#org', '@type' => 'Organization', 'name' => 'Think Mybiz Tech', 'logo' => ['@type' => 'ImageObject', 'url' => 'https://thinkmybiztech.com/assets/img/logo-512.png']]],
+  JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) : '';
+?>"""
+_h = head("%%TITLE%% | Think Mybiz Tech", "%%DESC%%", "%%CANON%%", og_type="article", og_image="%%OGIMG%%", extra="%%EXTRA%%")
+_h = (_h.replace("%%TITLE%%", "<?= $e($title) ?>").replace("%%DESC%%", "<?= $e($desc) ?>").replace("%%CANON%%", "<?= $e($canon) ?>")
+        .replace("%%OGIMG%%", "<?= $e($ogimg) ?>").replace('<link rel="canonical"', '<?php if ($ok): ?><link rel="canonical"')
+        .replace('<meta property="og:type"', '<?php else: ?><meta name="robots" content="noindex"><?php endif; ?>\n<meta property="og:type"')
+        .replace("%%EXTRA%%", '<?php if ($ok): ?><script type="application/ld+json"><?= $schema ?></script><?php endif; ?>'))
+_body = f"""<body data-page="article">{header("/insights/")}<main>
+<section class="section"><div class="container"><article class="article">
+<a href="/insights/">← All insights</a>
+<?php if ($ok): ?>
+<h1 style="margin-top:14px"><?= $post['title']['rendered'] ?></h1>
+<div class="meta"><time datetime="<?= $e($date) ?>"><?= $e(date('j F Y', strtotime($date))) ?></time></div>
+<?php if ($img !== ''): ?><img src="<?= $e($img) ?>" alt="" style="width:100%;border-radius:14px;margin:18px 0" loading="eager"><?php endif; ?>
+<div class="content"><?= $post['content']['rendered'] ?></div>
+<?php else: ?>
+<h1 style="margin-top:14px"><?= $e($title) ?></h1>
+<p class="notice"><?= $post === false ? 'This article is temporarily unavailable. Please try again shortly.' : 'That article could not be found.' ?> <a href="/insights/">View all insights</a>.</p>
+<?php endif; ?>
+</article></div></section>{cta()}</main>{FOOTER}</body></html>"""
+open(os.path.join(OUT, "insights", "article.php"), "w").write(ARTICLE_PHP.replace("%%OG%%", OG_IMAGE) + "\n" + _h + _body)
+
 
 # ---------- About ----------
 ab = hero("About us","Compliance professionals who build software","Think Mybiz Tech designs, builds, hosts and manages systems that keep a business's records, people and processes accurate, secure and audit-ready.", actions=False) + f"""
@@ -357,14 +440,16 @@ accurate records, clear audit trails and controls that business owners, auditors
 <div class="card"><h3>In-house team</h3><p>Our own engineers, working to documented standards.</p></div>
 </div></div></section>{cta()}"""
 pages.append(page("/about/","About Think Mybiz Tech | Software Built by Compliance Professionals",
-  "Think Mybiz Tech is a South African software engineering and business automation company led by founder MF Banda, with roots in accounting, tax and compliance.", ab, "/about/"))
+  "Think Mybiz Tech is a South African software engineering and business automation company led by founder MF Banda, with roots in accounting, tax and compliance.", ab, "/about/", schema=[ORG_LD]))
 
 # ---------- Contact ----------
 opts = ["Custom application / PWA","Website or portal","Business automation / AI","Data, database or integration","Cloud hosting &amp; support",
         "Compliance &amp; finance system","Taxnify configuration and integration","Digital transformation advisory","Other"]
 ct = hero("Let's build together","Tell us what you want to automate","Describe the process or application you need. We'll respond with a practical proposal.", actions=False) + f"""
 <section class="section"><div class="container grid g2" style="gap:40px;align-items:start">
-<div class="card"><form id="enquiry" class="form">
+<div class="card"><form id="enquiry" class="form" action="/api/enquiry.php" method="post" novalidate>
+<div class="hp" aria-hidden="true"><label for="website">Leave this field empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+<input type="hidden" name="ts" id="ts"><input type="hidden" name="page" id="page">
 <div class="row"><div><label for="name">Full name</label><input id="name" name="name" required autocomplete="name"></div>
 <div><label for="company">Company / organisation</label><input id="company" name="company" autocomplete="organization"></div></div>
 <div class="row"><div><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="email"></div>
@@ -372,13 +457,16 @@ ct = hero("Let's build together","Tell us what you want to automate","Describe t
 <div class="row"><div><label for="service">What do you need?</label><select id="service" name="service">{''.join(f'<option>{o}</option>' for o in opts)}</select></div>
 <div><label for="budget">Timeline</label><select id="budget" name="budget"><option>Exploring options</option><option>Within 1 month</option><option>1–3 months</option><option>3+ months</option></select></div></div>
 <div><label for="message">About your project</label><textarea id="message" name="message" rows="6" required placeholder="The process you want to automate, who uses it, and what success looks like."></textarea></div>
+<label class="consent"><input type="checkbox" name="consent" value="yes" required> <span>I agree that Think Mybiz Tech may use these details to respond to my enquiry and prepare a proposal, as described in the <a href="/privacy/">privacy notice</a>.</span></label>
 <button class="btn btn-primary" type="submit">Send enquiry</button>
-<p id="enquiry-ok" class="notice" style="display:none">Your email app has opened with your enquiry. If it didn't, email us directly at <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
-<p style="font-size:.8rem;color:var(--muted)">We use your details only to respond to your enquiry. See our <a href="/privacy/">privacy notice</a>.</p>
+<div id="enquiry-ok" class="notice ok" style="display:none" role="status"></div>
+<div id="enquiry-err" class="notice err" style="display:none" role="alert"></div>
+<p style="font-size:.8rem;color:var(--muted)">Prefer to chat? <a href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp">WhatsApp {PHONE}</a>.</p>
 </form></div>
 <div><div class="card">
 <div class="contact-item">{icon("mail")}<div><small>Email</small><a href="mailto:{EMAIL}">{EMAIL}</a></div></div>
 <div class="contact-item">{icon("phone")}<div><small>Telephone</small><a href="tel:{TEL}">{PHONE}</a></div></div>
+<div class="contact-item">{icon("users")}<div><small>WhatsApp</small><a href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp">Chat on WhatsApp — {PHONE}</a></div></div>
 <div class="contact-item">{icon("pin")}<div><small>Address</small><span>{ADDRESS}</span></div></div>
 </div>
 <div class="card dark" style="margin-top:20px"><h3>What happens next</h3><ul class="checks" style="margin-top:12px">
@@ -388,15 +476,19 @@ ct = hero("Let's build together","Tell us what you want to automate","Describe t
 for(var i=0;i<sel.options.length;i++){{if(sel.options[i].text.toLowerCase().indexOf(s.toLowerCase().split(" ")[0])===0){{sel.selectedIndex=i;break;}}}}
 var m=document.getElementById("message");if(m&&!m.value)m.value="I'm interested in: "+s+"\\n\\n";}})();</script>"""
 pages.append(page("/contact/","Contact Think Mybiz Tech | Start a Software Project",
-  "Contact Think Mybiz Tech in Mokopane, Limpopo. Email info@thinkmybiztech.com or call 066 210 5631 to discuss your software, automation or Taxnify project.", ct, "/contact/"))
+  "Contact Think Mybiz Tech in Mokopane, Limpopo. Email info@thinkmybiztech.com, call or WhatsApp 063 621 5642 to discuss your software, automation or Taxnify project.", ct, "/contact/", schema=[ORG_LD]))
 
 # ---------- Privacy ----------
 pv = hero("Privacy","Privacy &amp; POPIA notice","How this website handles personal information.", actions=False) + f"""
 <section class="section"><div class="container"><div class="article"><div class="content">
 <p>Think Mybiz Tech respects your privacy and processes personal information in line with the Protection of Personal Information Act, 2013 (POPIA).</p>
-<h3>What we collect</h3><p>When you contact us or place an order, we receive the details you choose to give us — such as your name, company, email address, phone number and project information. Orders are processed through Hostinger Ecommerce's hosted checkout.</p>
+<h3>Responsible party</h3><p>Think Mybiz Tech, {ADDRESS}. Information Officer: MF Banda — <a href="mailto:{EMAIL}">{EMAIL}</a>, {PHONE}.</p>
+<h3>What we collect</h3><p>When you contact us or place an order, we receive the details you choose to give us — such as your name, company, email address, phone number and project information. When you submit the enquiry form we also record the date and time and a one-way coded version of your internet address, used only to prevent spam and abuse. Orders are processed through Hostinger Ecommerce's hosted checkout.</p>
+<h3>Where it is kept</h3><p>Enquiries are stored in a private area of our website hosting and sent to our business mailbox. Our website, email and store are hosted by Hostinger, which processes information on our behalf as an operator; its servers may be located outside South Africa. If you contact us on WhatsApp, the conversation is also subject to WhatsApp's own terms and privacy policy.</p>
 <h3>How we use it</h3><p>We use your information only to respond to enquiries, prepare proposals, deliver services you have ordered, issue invoices and meet our legal obligations. We do not sell your personal information.</p>
-<h3>Your rights</h3><p>You may ask to access, correct or delete the personal information we hold about you, or object to its processing, by emailing <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
+<h3>How long we keep it</h3><p>We keep enquiry information only for as long as we need it to respond, prepare and manage any resulting engagement, and meet our legal and record-keeping obligations. Enquiries that do not lead to an engagement are deleted when they are no longer needed.</p>
+<h3>Cookies and tracking</h3><p>This website does not use advertising cookies. Your browser stores your shopping cart locally so it is kept between visits.</p>
+<h3>Your rights</h3><p>You may ask to access, correct or delete the personal information we hold about you, or object to its processing, by emailing <a href="mailto:{EMAIL}">{EMAIL}</a>. You may also lodge a complaint with the Information Regulator (South Africa) at <a href="https://inforegulator.org.za" rel="noopener">inforegulator.org.za</a>.</p>
 <h3>Client systems</h3><p>Data held in applications we build or host for clients belongs to those clients. Each client's data is kept strictly separate and handled under the terms of its service agreement.</p>
 <h3>Contact</h3><p>Questions about this notice: <a href="mailto:{EMAIL}">{EMAIL}</a> · {PHONE} · {ADDRESS}.</p>
 </div></div></div></section>"""
@@ -415,16 +507,34 @@ page("/404.html","Page not found | Think Mybiz Tech","Page not found.",
 
 # ---------- SEO files ----------
 today = datetime.date.today().isoformat()
-public = [p for p in pages if "checkout" not in p and p != "/insights/post/"]
+public = [p for p in pages if "checkout" not in p]
 open(os.path.join(OUT,"sitemap.xml"),"w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   "".join(f"<url><loc>{DOMAIN}{p}</loc><lastmod>{today}</lastmod></url>\n" for p in public) + "</urlset>\n")
-open(os.path.join(OUT,"robots.txt"),"w").write(f"User-agent: *\nAllow: /\nDisallow: /checkout/\nSitemap: {DOMAIN}/sitemap.xml\n")
+open(os.path.join(OUT,"robots.txt"),"w").write(f"User-agent: *\nAllow: /\nDisallow: /checkout/\nDisallow: /api/\nSitemap: {DOMAIN}/sitemap.xml\nSitemap: {DOMAIN}/sitemap-insights.xml\n")
 open(os.path.join(OUT,"favicon.svg"),"w").write(LOGO.replace('aria-hidden="true"','xmlns="http://www.w3.org/2000/svg"'))
 open(os.path.join(OUT,".htaccess"),"w").write("""Options -Indexes
 RedirectMatch 404 /\\.(git|gitignore)
 RedirectMatch 404 ^/_src/
 ErrorDocument 404 /404.html
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# One canonical host
+RewriteCond %{HTTP_HOST} ^www\\.thinkmybiztech\\.com$ [NC]
+RewriteRule ^(.*)$ https://thinkmybiztech.com/$1 [R=301,L]
+# Legacy article links /insights/post/?slug=x -> /insights/x/
+RewriteCond %{QUERY_STRING} (^|&)slug=([a-z0-9-]+)
+RewriteRule ^insights/post/?$ /insights/%2/? [R=301,L]
+RewriteRule ^insights/post/?$ /insights/ [R=301,L]
+# Server-rendered articles and their sitemap
+RewriteRule ^sitemap-insights\\.xml$ api/sitemap-insights.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^insights/([a-z0-9-]+)/?$ insights/article.php?slug=$1 [L,QSA]
+# Include-only library
+RewriteRule ^api/cms\\.php$ - [F,L]
+</IfModule>
 <IfModule mod_headers.c>
+Header always set Strict-Transport-Security "max-age=31536000"
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set X-Frame-Options "SAMEORIGIN"
@@ -435,6 +545,8 @@ ExpiresActive On
 ExpiresByType text/css "access plus 7 days"
 ExpiresByType application/javascript "access plus 7 days"
 ExpiresByType image/svg+xml "access plus 30 days"
+ExpiresByType image/png "access plus 30 days"
+ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 """)
 print("built", len(pages), "pages")
