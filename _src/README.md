@@ -20,6 +20,9 @@ Hand-edited files (not generated): `assets/css/style.css`, `assets/js/main.js`, 
 | `api/enquiry.php` | Contact form endpoint. Validates, blocks spam (honeypot, timing, 5/hour per IP), appends each enquiry to `../tmbt_private/enquiries.jsonl` (outside `public_html`) and emails info@ with Reply-To = client. |
 | `api/cms.php` | Read-only WordPress client with a 10-minute cache in `../tmbt_private/cache/`. Not directly reachable. |
 | `insights/article.php` (generated) | Server-renders each post at `/insights/<slug>/` with title, description, canonical and BlogPosting schema. |
+| `api/posts.php` | Same-origin JSON of the newest posts for the home page. |
+| `insights/index.php` (generated) | Server-rendered Insights listing. |
+| `_src/make_covers.py` | Generates `assets/img/insights/<slug>.png` covers, used when a post has no featured image. |
 | `api/sitemap-insights.php` | `/sitemap-insights.xml` — every published post, listed in `robots.txt`. |
 
 Contact details, WhatsApp number and social profile URLs are constants at the top of `build.py` (`PHONE`, `TEL`, `WA_NUMBER`, `SOCIAL`). Add a social URL and rebuild to show it in the footer and in the Organization schema.

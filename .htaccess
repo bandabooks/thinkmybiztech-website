@@ -2,6 +2,7 @@ Options -Indexes
 RedirectMatch 404 /\.(git|gitignore)
 RedirectMatch 404 ^/_src/
 ErrorDocument 404 /404.html
+DirectoryIndex index.html index.php
 <IfModule mod_rewrite.c>
 RewriteEngine On
 # One canonical host

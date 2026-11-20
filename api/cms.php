@@ -23,7 +23,9 @@ function tmbt_cms_get(string $path) {
         if (is_array($c)) return $c;
     }
     $ctx = stream_context_create(['http' => ['timeout' => 6, 'ignore_errors' => true, 'header' => "Accept: application/json\r\nUser-Agent: thinkmybiztech-site\r\n"]]);
-    $raw = @file_get_contents(TMBT_CMS_API . $path, false, $ctx);
+    // The CMS sits behind Hostinger's CDN; a time-bucket parameter stops a stale edge copy being served for more than the TTL.
+    $url = TMBT_CMS_API . $path . (strpos($path, '?') === false ? '?' : '&') . '_t=' . intdiv(time(), TMBT_CMS_TTL);
+    $raw = @file_get_contents($url, false, $ctx);
     $status = 0;
     foreach ($http_response_header ?? [] as $h) if (preg_match('#^HTTP/\S+\s+(\d{3})#', $h, $m)) $status = (int)$m[1];
     $data = $raw !== false ? json_decode($raw, true) : null;
@@ -52,4 +54,32 @@ function tmbt_cms_all_posts() {
         if (count($r) < 100) break;
     }
     return $all;
+}
+
+/** Cover image for a post: WordPress featured image, else a generated cover in /assets/img/insights/<slug>.png, else ''. */
+function tmbt_post_image(array $p): string {
+    $img = $p['_embedded']['wp:featuredmedia'][0]['source_url'] ?? '';
+    if ($img !== '') return (string)$img;
+    $slug = preg_replace('/[^a-z0-9-]/', '', strtolower((string)($p['slug'] ?? '')));
+    $root = (string)($_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__));
+    return ($slug !== '' && is_file($root . '/assets/img/insights/' . $slug . '.png')) ? '/assets/img/insights/' . $slug . '.png' : '';
+}
+
+/** @return array|false compact list of the newest published posts for listings */
+function tmbt_cms_list(int $n) {
+    $n = max(1, min(50, $n));
+    $r = tmbt_cms_get('/posts?status=publish&_embed=wp:featuredmedia&per_page=' . $n);
+    if ($r === false) return false;
+    $out = [];
+    foreach ($r as $p) {
+        if (!is_array($p) || empty($p['slug'])) continue;
+        $out[] = [
+            'slug' => (string)$p['slug'],
+            'title' => (string)($p['title']['rendered'] ?? ''),
+            'date' => substr((string)($p['date'] ?? ''), 0, 10),
+            'excerpt' => mb_substr(trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string)($p['excerpt']['rendered'] ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8'))), 0, 180),
+            'image' => tmbt_post_image($p),
+        ];
+    }
+    return $out;
 }

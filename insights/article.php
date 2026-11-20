@@ -11,8 +11,9 @@ $ok = is_array($post);
 $title = $ok ? html_entity_decode(strip_tags($post['title']['rendered']), ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($post === false ? 'Article temporarily unavailable' : 'Article not found');
 $desc = $ok ? mb_substr(trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($post['excerpt']['rendered']), ENT_QUOTES | ENT_HTML5, 'UTF-8'))), 0, 158) : 'Insights from Think Mybiz Tech.';
 $canon = 'https://thinkmybiztech.com/insights/' . $slug . '/';
-$img = $ok ? ($post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? '') : '';
-$ogimg = $img !== '' ? $img : 'https://thinkmybiztech.com/assets/img/og-default.png';
+$img = $ok ? tmbt_post_image($post) : '';
+$imgAbs = ($img !== '' && $img[0] === '/') ? 'https://thinkmybiztech.com' . $img : $img;
+$ogimg = $imgAbs !== '' ? $imgAbs : 'https://thinkmybiztech.com/assets/img/og-default.png';
 $date = $ok ? substr((string)$post['date'], 0, 10) : '';
 $schema = $ok ? json_encode(['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $title, 'description' => $desc,
   'datePublished' => $post['date_gmt'] . 'Z', 'dateModified' => $post['modified_gmt'] . 'Z', 'mainEntityOfPage' => $canon, 'image' => $ogimg,

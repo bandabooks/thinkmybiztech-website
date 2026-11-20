@@ -3,7 +3,6 @@
   "use strict";
   var STORE_API = "https://api-ecommerce.hostinger.com/v2";
   var CHANNEL = "scha_01M7W4WD4X1BC4AGPJEVHMWYGK";
-  var CMS = "https://cms.thinkmybiztech.com/wp-json/wp/v2";
   var CART_KEY = "tmbt_cart_v1";
 
   /* ---------- Navigation ---------- */
@@ -163,39 +162,26 @@
   /* Clear cart after a successful checkout */
   if (document.body.getAttribute("data-page") === "checkout-success") writeCart([]);
 
-  /* ---------- Blog (WordPress REST API, fetched at runtime) ---------- */
-  function fmtDate(s) { try { return new Date(s).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return ""; } }
+  /* ---------- Latest articles (same-origin /api/posts.php, which reads the CMS server-side) ---------- */
+  function fmtDate(s) { try { return new Date(s + "T12:00:00").toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return ""; } }
   function postCard(p) {
-    var img = p._embedded && p._embedded["wp:featuredmedia"] && p._embedded["wp:featuredmedia"][0] && p._embedded["wp:featuredmedia"][0].source_url;
-    var c = el("article", "card post-card");
-    c.innerHTML = "<a class='thumb' href='/insights/" + encodeURIComponent(p.slug) + "/' aria-hidden='true' tabindex='-1'>" +
-      (img ? "<img loading='lazy' alt='' src='" + esc(img) + "'>" : "") + "</a><div class='body'><div class='meta'>" + fmtDate(p.date) +
-      "</div><h3><a href='/insights/" + encodeURIComponent(p.slug) + "/'>" + p.title.rendered + "</a></h3><div class='excerpt'>" +
-      String(p.excerpt.rendered).replace(/<[^>]+>/g, "").slice(0, 180) + "</div><a href='/insights/" + encodeURIComponent(p.slug) + "/'>Read article →</a></div>";
+    var u = "/insights/" + encodeURIComponent(p.slug) + "/", c = el("article", "card post-card");
+    c.innerHTML = "<a class='thumb' href='" + u + "' aria-hidden='true' tabindex='-1'>" +
+      (p.image ? "<img loading='lazy' alt='' width='1200' height='630' src='" + esc(p.image) + "'>" : "") + "</a><div class='body'><div class='meta'>" + fmtDate(p.date) +
+      "</div><h3><a href='" + u + "'>" + p.title + "</a></h3><div class='excerpt'>" + esc(p.excerpt) + "</div><a href='" + u + "'>Read article →</a></div>";
     return c;
   }
   document.querySelectorAll("[data-posts]").forEach(function (box) {
-    var n = box.getAttribute("data-posts") || 9, page = 1;
-    var more = document.querySelector("[data-more-posts]");
-    function load() {
-      getJSON(CMS + "/posts?per_page=" + n + "&page=" + page + "&_embed").then(function (r) {
-        if (page === 1) box.innerHTML = "";
-        var posts = list(r.json);
-        if (!posts.length && page === 1) {
-          box.innerHTML = "<p class='notice'>New articles on software, automation and compliance are on the way. Check back soon.</p>";
-          if (box.hasAttribute("data-hide-empty")) box.closest("section").style.display = "none";
-          return;
-        }
-        posts.forEach(function (p) { box.appendChild(postCard(p)); });
-        var pages = +r.res.headers.get("X-WP-TotalPages") || 1;
-        if (more) more.style.display = page < pages ? "" : "none";
-      }).catch(function () {
-        box.innerHTML = "<p class='notice'>Articles are temporarily unavailable. Please try again shortly.</p>";
-        if (box.hasAttribute("data-hide-empty")) box.closest("section").style.display = "none";
-      });
-    }
-    if (more) more.addEventListener("click", function () { page++; load(); });
-    load();
+    var n = box.getAttribute("data-posts") || 3;
+    function hide() { if (box.hasAttribute("data-hide-empty")) box.closest("section").style.display = "none"; }
+    fetch("/api/posts.php?n=" + n, { headers: { Accept: "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j.ok || !j.posts || !j.posts.length) { hide(); return; }
+        box.innerHTML = "";
+        j.posts.forEach(function (p) { box.appendChild(postCard(p)); });
+      })
+      .catch(hide);
   });
   /* ---------- Contact form → /api/enquiry.php (stored + emailed server-side) ---------- */
   var form = document.getElementById("enquiry");
