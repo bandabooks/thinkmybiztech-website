@@ -212,3 +212,41 @@ p+p{margin-top:.8em}
 .notice.err{border-style:solid;border-color:#f0b4b4;background:#fff5f5;color:#7a1d1d}
 .social{display:flex;gap:10px;margin-top:14px}
 .social a{color:#cad7ef;border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:6px 10px;font-size:.85rem}
+
+/* Mobile refinements (phones) */
+.grid>*,.form .row>*{min-width:0}
+.contact-item a,.contact-item div{overflow-wrap:anywhere}
+.quick-contact{display:none}
+@media (max-width:860px){
+  .nav-links{max-height:calc(100vh - 68px);overflow-y:auto}
+  .nav-links li{width:100%}
+  .nav-links a{display:block;padding:14px 12px;font-size:1rem;border-bottom:1px solid rgba(255,255,255,.06);border-radius:0}
+  .nav-links a.btn,.nav-cta a{display:flex;width:100%;border-bottom:0;border-radius:10px;text-align:center;justify-content:center;padding:14px}
+  .nav-cta{margin:12px 0 0}
+}
+@media (max-width:640px){
+  .container{padding-left:18px;padding-right:18px}
+  .hero .container{padding-top:44px;padding-bottom:44px}
+  .section{padding:44px 0}
+  .card{padding:18px}
+  .form input,.form select,.form textarea{font-size:16px;padding:12px 14px;min-height:48px}
+  .form textarea{min-height:130px}
+  .form label{font-size:.9rem}
+  .consent{font-size:.88rem;line-height:1.5}
+  .consent input{width:22px!important;height:22px;min-height:0;flex:none;margin-top:1px}
+  .form button[type=submit]{width:100%;min-height:50px;justify-content:center}
+  .hero .btn,.cta .btn,.band .btn{width:100%;justify-content:center;text-align:center}
+  .contact-item{padding:14px 0}
+  .contact-item a{display:inline-block;padding:4px 0}
+  .site-footer a{display:inline-block;padding:6px 0}
+  body{padding-bottom:72px}
+  .quick-contact{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:-22px auto 0;position:relative;z-index:2}
+  .quick-contact a{display:flex;flex-direction:column;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 6px;font-weight:600;font-size:.85rem;color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}
+  .quick-contact a .icon{width:40px;height:40px;margin:0;border-radius:10px;display:grid;place-items:center}
+  .quick-contact a .icon svg{width:22px;height:22px}
+  .quick-contact a.wa .icon{background:rgba(255,255,255,.16);color:#fff}
+  .quick-contact a.wa{background:#128c4a;border-color:#128c4a;color:#fff}
+  .wa-float{right:14px;bottom:14px}
+  .price-card .badge[style*=hidden]{display:none}
+  .price-card .badge[style*=hidden]+h3{margin-top:0!important}
+}

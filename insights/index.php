@@ -12,7 +12,7 @@ $posts = tmbt_cms_list(50);
 <meta property="og:image" content="https://thinkmybiztech.com/assets/img/og-default.png"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#06132b">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/img/logo-512.png">
 <link rel="preload" href="/assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css?v=9fbab5059d">
+<link rel="stylesheet" href="/assets/css/style.css?v=5dd7416d21">
 </head><body data-page=""><header class="site-header"><div class="container nav">
 <a class="brand" href="/" aria-label="Think Mybiz Tech home"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#fff"/>
 <path d="M11 12.5h18v4.2h-6.8V29h-4.4V16.7H11z" fill="#0a1d3f"/><circle cx="12.5" cy="25" r="2.2" fill="#2f6df6"/><circle cx="27.5" cy="25" r="2.2" fill="#19c3a5"/></svg><span class="brand-text"><strong>THINK MYBIZ</strong><span>TECH</span></span></a>

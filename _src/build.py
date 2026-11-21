@@ -460,6 +460,10 @@ pages.append(page("/about/","About Think Mybiz Tech | Software Built by Complian
 opts = ["Custom application / PWA","Website or portal","Business automation / AI","Data, database or integration","Cloud hosting &amp; support",
         "Compliance &amp; finance system","Taxnify configuration and integration","Digital transformation advisory","Other"]
 ct = hero("Let's build together","Tell us what you want to automate","Describe the process or application you need. We'll respond with a practical proposal.", actions=False) + f"""
+<div class="container"><div class="quick-contact" aria-label="Quick contact">
+<a href="tel:{TEL}" data-track="call">{icon("phone")}Call</a>
+<a class="wa" href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp"><div class="icon">{WA_SVG}</div>WhatsApp</a>
+<a href="mailto:{EMAIL}" data-track="email">{icon("mail")}Email</a></div></div>
 <section class="section"><div class="container grid g2" style="gap:40px;align-items:start">
 <div class="card"><form id="enquiry" class="form" action="/api/enquiry.php" method="post" novalidate>
 <div class="hp" aria-hidden="true"><label for="website">Leave this field empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
