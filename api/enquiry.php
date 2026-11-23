@@ -72,6 +72,18 @@ $record = ['ref' => $ref, 'received_at' => gmdate('c'), 'ip_hash' => $ipHash, 'c
 // 1. Durable log (JSON Lines), private, locked append
 $logOk = @file_put_contents($private . '/enquiries.jsonl', json_encode($record, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX) !== false;
 if ($logOk) @chmod($private . '/enquiries.jsonl', 0600);
+// 1b. Client Hub lead pipeline (when installed). The log and email above still work if this fails.
+$dbOk = false;
+try {
+    require_once __DIR__ . '/../portal/lib/bootstrap.php';
+    if (hub_installed()) {
+        create_request(['ref' => $ref, 'name' => $d['name'], 'email' => $d['email'], 'phone' => $d['phone'], 'company' => $d['company'],
+            'service' => html_entity_decode($d['service']), 'timeline' => $d['timeline'], 'description' => $d['message'], 'page' => $d['page'],
+            'utm_source' => oneline(field('utm_source', 80)) ?: null, 'utm_medium' => oneline(field('utm_medium', 80)) ?: null,
+            'utm_campaign' => oneline(field('utm_campaign', 120)) ?: null], 'website_form', null);
+        $dbOk = true;
+    }
+} catch (Throwable $t) { error_log('TMBT enquiry DB insert failed: ' . $t->getMessage()); }
 $rates[$ipHash][] = $now;
 @file_put_contents($rateFile, json_encode($rates), LOCK_EX);
 
@@ -91,5 +103,5 @@ $headers = [
 ];
 $mailOk = @mail(TO_EMAIL, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, implode("\r\n", $headers), '-f' . TO_EMAIL);
 
-if (!$logOk && !$mailOk) out(500, ['ok' => false, 'error' => 'We could not record your enquiry. Please email ' . TO_EMAIL . ' or WhatsApp 063 621 5642.']);
+if (!$logOk && !$mailOk && !$dbOk) out(500, ['ok' => false, 'error' => 'We could not record your enquiry. Please email ' . TO_EMAIL . ' or WhatsApp 063 621 5642.']);
 out(200, ['ok' => true, 'ref' => $ref]);

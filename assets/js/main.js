@@ -204,6 +204,7 @@
           okBox.innerHTML = "<strong>Thank you — your enquiry has been received.</strong><br>Reference <strong>" + esc(j.ref || "") +
             "</strong>. We'll be in touch, normally within one business day. For anything urgent, WhatsApp or call 063 621 5642.";
           okBox.style.display = "";
+          document.dispatchEvent(new Event("tmbt:lead"));
           okBox.scrollIntoView({ behavior: "smooth", block: "center" });
         })
         .catch(function (j) {
