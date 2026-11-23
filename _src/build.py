@@ -251,13 +251,21 @@ PACKAGES = [
  {"id":"advisory","group":"Hosting, care &amp; marketing","name":"Process Review &amp; Roadmap","price":3500,"unit":"once-off","for":"Not sure what to automate first.",
   "inc":["Workflow and data review session","Automation priorities and quick wins","Written phased roadmap","Fee credited if you proceed within 60 days"]},
 ]
-HOURLY_RATE = 550   # ad-hoc changes outside a care plan, per hour
-def rand(n): return "R" + f"{n:,}".replace(",", " ")
+HOURLY_RATE = 550   # ad-hoc changes outside a care plan, per hour (excl. VAT)
+# PACKAGES prices are EXCLUDING VAT (the Client Hub adds VAT on quotes/invoices).
+# Think Mybiz is a VAT vendor (confirmed by MF Banda 23/11/2026), so advertised prices must include VAT:
+# VAT Act s65 / SARS VAT 404 — "all prices charged, advertised or quoted by a vendor must include VAT". Standard rate 15% (SARS, checked 23/11/2026).
+VAT_RATE_PCT = 15
+def incl_vat(n): return round(n * (100 + VAT_RATE_PCT)) / 100
+def rand(n):
+    whole = abs(n) == int(abs(n))
+    return "R" + (f"{n:,.0f}" if whole else f"{n:,.2f}").replace(",", " ")
 def package_cards(group):
     out = ""
     for k in [x for x in PACKAGES if x["group"] == group]:
         unit = k["unit"]
-        price = (f'<small>from</small> {rand(k["price"])}' if unit == "from" else f'{rand(k["price"])} <small>{unit}</small>')
+        p = rand(incl_vat(k["price"]))
+        price = (f'<small>from</small> {p}<small class="punit">incl. VAT</small>' if unit == "from" else f'{p}<small class="punit">{unit} · incl. VAT</small>')
         badge = '<span class="badge">Most chosen</span>' if k.get("rec") else '<span class="badge" style="visibility:hidden">.</span>'
         out += f"""<div class="card price-card">{badge}<h3 style="margin-top:12px">{k['name']}</h3><div class="price">{price}</div><p class="desc" style="flex:0">{k['for']}</p>
 <ul class="checks" style="margin:4px 0 20px;flex:1">{''.join(f'<li>{i}</li>' for i in k['inc'])}</ul>
@@ -395,7 +403,7 @@ pfp = hero("Portfolio","Work we have delivered","Live websites, client portals a
 <section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Your project next</span><h2 style="margin:.35em 0 .4em">Every project starts with a clear quotation</h2>
 <p>Tell us what you need. You get a written quotation in your client account, a private test site during the build, and invoices you can view and pay by EFT.</p>
 <a class="btn btn-primary" href="/portal/?p=start">Start a project</a></div>
-<div><ul class="checks" style="color:#d6e1f5"><li>Fixed guide prices — see <a href="/pricing/" style="color:#fff;text-decoration:underline">pricing</a></li><li>Quotes, invoices and messages in one client account</li><li>You own your content and data</li></ul></div></div></div></section>{cta()}"""
+<div><ul class="checks" style="color:#d6e1f5"><li>Guide prices incl. VAT — see <a href="/pricing/" style="color:#fff;text-decoration:underline">pricing</a></li><li>Quotes, invoices and messages in one client account</li><li>You own your content and data</li></ul></div></div></div></section>{cta()}"""
 pages.append(page("/portfolio/","Portfolio | Websites, Portals & Applications — Think Mybiz Tech",
   "Websites, client portals and business applications delivered by Think Mybiz Tech for hospitality, accounting, bookkeeping, security, transport, mining and community organisations.", pfp, "/portfolio/",
   schema=[{"@context":"https://schema.org","@type":"ItemList","name":"Think Mybiz Tech portfolio","itemListElement":[
@@ -445,7 +453,7 @@ pages.append(page("/how-we-work/","How We Work | Delivery Process & Engagement M
   "Discover, define, design, engineer, validate, launch and operate. Managed dedicated solutions, custom build and handover, Taxnify integration and long-term partnerships.", hw, "/how-we-work/"))
 
 # ---------- Pricing ----------
-pr = hero("Pricing","Clear packages. Written quotations.","Guide prices in South African rand for our most requested services. Every engagement is confirmed in a written quotation before work starts.", actions=False) + f"""
+pr = hero("Pricing","Clear packages. Written quotations.","Guide prices in South African rand, including VAT, for our most requested services. Every engagement is confirmed in a written quotation before work starts.", actions=False) + f"""
 <section class="section"><div class="container">
 <div class="section-head"><span class="eyebrow">Websites</span><h2>Websites that bring in enquiries</h2></div>
 <div class="grid g4">{package_cards("Websites")}</div></div></section>
@@ -456,9 +464,9 @@ pr = hero("Pricing","Clear packages. Written quotations.","Guide prices in South
 <section class="section"><div class="container">
 <div class="section-head"><span class="eyebrow">Hosting, care &amp; marketing</span><h2>Ongoing support and growth</h2></div>
 <div class="grid g3">{package_cards("Hosting, care &amp; marketing")}</div>
-<div class="notice" style="margin-top:26px"><strong>How pricing works.</strong> Guide prices are in South African rand. Your written quotation confirms the final scope, price and any VAT.
+<div class="notice" style="margin-top:26px"><strong>How pricing works.</strong> All prices are in South African rand and <strong>include VAT at {VAT_RATE_PCT}%</strong>. Your written quotation confirms the final scope and price and shows the VAT separately.
 Once-off projects: 50% deposit to start and the balance at go-live. Monthly plans are billed in advance and can be cancelled with one month's notice.
-Changes outside a care plan are billed at {rand(HOURLY_RATE)} per hour. Third-party costs (domains, paid plugins, payment-gateway fees, advertising spend) are passed on at cost.</div>
+Changes outside a care plan are billed at {rand(incl_vat(HOURLY_RATE))} per hour incl. VAT. Third-party costs (domains, paid plugins, payment-gateway fees, advertising spend) are passed on at cost.</div>
 </div></section>
 <section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Custom engagements</span><h2>Choose how you want to own and run your system</h2>
 <p class="lead">Every proposal specifies deliverables, acceptance criteria, service levels, data ownership and exit arrangements.</p></div>
@@ -494,7 +502,7 @@ pages.append(page("/hosting/","Hosting, Domains, Email & VPS | Think Mybiz Tech"
   "Domain registration, managed website hosting, business email and VPS servers from Think Mybiz Tech, or get hosting directly from Hostinger.", hst, "/hosting/"))
 
 pages.append(page("/pricing/","Pricing & Engagements | Think Mybiz Tech",
-  "Guide prices in rand for websites, client portals, business applications, website care, social media and Meta advertising management. Every engagement confirmed in a written quotation.", pr, "/pricing/", "pricing"))
+  "Guide prices in rand (incl. VAT) for websites, client portals, business applications, website care, social media and Meta advertising management. Every engagement confirmed in a written quotation.", pr, "/pricing/", "pricing"))
 
 # ---------- Insights ----------
 ins = hero("Insights","Software, automation and compliance — practical thinking","Articles from the Think Mybiz Tech team on building trustworthy business systems in South Africa.", actions=False) + """

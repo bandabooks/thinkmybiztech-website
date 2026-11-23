@@ -286,3 +286,5 @@ p+p{margin-top:.8em}
 /* Share buttons */
 .share{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0}
 .share a{border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85rem;color:var(--ink)}
+
+.price .punit{display:block;margin-top:4px;font-size:.8rem;font-weight:500}

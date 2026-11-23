@@ -30,7 +30,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         $defaults = [
             'quote_terms' => "1. Prices are in South African rand and are valid until the date shown.\n2. A 50% deposit is payable to start; the balance is payable at go-live, before the site or system is transferred.\n3. Scope is limited to the items listed. Additional work is quoted separately or billed at the hourly rate after your approval.\n4. You own your content and data. Third-party costs (domains, licences, gateway fees, advertising) are payable by the client.",
             'invoice_terms' => "Payment by EFT using the invoice number as reference. Please send proof of payment to info@thinkmybiztech.com.",
-            'payment_terms_days' => '7', 'quote_valid_days' => '30', 'quote_prefix' => 'QUO', 'invoice_prefix' => 'INV', 'co_vat_registered' => '0',
+            'payment_terms_days' => '7', 'quote_valid_days' => '30', 'quote_prefix' => 'QUO', 'invoice_prefix' => 'INV',
+            // Contracting entity: Think Mybiz is a VAT vendor (confirmed by MF Banda 23/11/2026). Details as published on thinkmybiz.co.za.
+            // Banking is NOT pre-filled: MF Banda enters it in Admin -> Settings, where all of these can be corrected.
+            'co_legal_name' => 'Think Mybiz Accountants and Tax Practioners (Pty) Ltd', 'co_reg_no' => '2021/819201/07',
+            'co_vat_number' => '4010320630', 'co_vat_registered' => '1',
         ];
         $st = $pdo->prepare('INSERT IGNORE INTO settings (k, v, updated_at) VALUES (?,?,?)');
         foreach ($defaults as $k => $v) $st->execute([$k, $v, $now]);

@@ -219,7 +219,7 @@ if ($p === 'start') {
     $sopt = fn(array $a, string $cur) => implode('', array_map(fn($x) => '<option' . ($cur === $x ? ' selected' : '') . '>' . e($x) . '</option>', $a));
     page_top('Start a project', 'client', $me, '');
     echo '<div class="hub-split wide"><div class="hub-card"><span class="eyebrow">Start a project</span><h1>Tell us what you need</h1><p class="muted">We reply within one business day. Your written quotation arrives in your client account.</p>';
-    if ($pkg) echo '<div class="notice ok">Package: <strong>' . e(html_entity_decode($pkg['name'])) . '</strong> — guide price ' . e(($pkg['unit'] === 'from' ? 'from ' : '') . money($pkg['price'] * 100) . ($pkg['unit'] !== 'from' ? ' ' . $pkg['unit'] : '')) . '</div>';
+    if ($pkg) echo '<div class="notice ok">Package: <strong>' . e(html_entity_decode($pkg['name'])) . '</strong> — guide price ' . e(($pkg['unit'] === 'from' ? 'from ' : '') . money(intdiv($pkg['price'] * 100 * (10000 + VAT_RATE_BP) + 5000, 10000)) . ($pkg['unit'] !== 'from' ? ' ' . $pkg['unit'] : '') . ' incl. VAT') . '</div>';
     if ($err) echo '<p class="notice err" role="alert">' . e($err) . '</p>';
     echo '<form method="post" class="form" data-utm>' . csrf_field() . '<div class="hp" aria-hidden="true"><label>Leave empty<input name="website" tabindex="-1" autocomplete="off"></label></div>'
        . '<input type="hidden" name="ts" data-ts><input type="hidden" name="page" data-page><input type="hidden" name="package_id" value="' . e($pkg['id'] ?? '') . '">'

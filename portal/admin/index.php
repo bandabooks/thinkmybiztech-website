@@ -489,7 +489,7 @@ if ($p === 'settings') {
     $co = company_profile();
     $in = fn($k, $label, $v, $extra = '') => '<div><label>' . $label . '</label><input name="' . $k . '" value="' . e($v) . '" ' . $extra . '></div>';
     page_top('Settings', 'admin', $S, 'settings');
-    echo '<h1 class="hub-h1">Settings</h1><section class="hub-card"><h2>Company &amp; banking (printed on quotations and invoices)</h2><form method="post" class="form">' . csrf_field() . '<input type="hidden" name="action" value="company">'
+    echo '<h1 class="hub-h1">Settings</h1><section class="hub-card"><h2>Company &amp; banking (printed on quotations and invoices)</h2><p class="small muted">The legal entity below is the supplier on every quotation and invoice and must be the entity registered for the VAT number shown. Confirm it before issuing the first document.</p><form method="post" class="form">' . csrf_field() . '<input type="hidden" name="action" value="company">'
        . '<div class="row">' . $in('company_name', 'Trading name', $co['company_name']) . $in('legal_name', 'Legal entity name (as registered with CIPC)', $co['legal_name']) . '</div>'
        . '<div class="row">' . $in('reg_no', 'Company registration number', $co['reg_no']) . $in('address', 'Address', $co['address']) . '</div>'
        . '<div class="row">' . $in('email', 'Email', $co['email']) . $in('phone', 'Phone', $co['phone']) . '</div>'
