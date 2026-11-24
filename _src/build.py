@@ -12,6 +12,8 @@ WA_NUMBER = "27636215642"       # WhatsApp click-to-chat (wa.me format, no +)
 WA_TEXT = "Hello Think Mybiz Tech, I'd like to discuss a project."
 WA_URL = "https://wa.me/" + WA_NUMBER + "?text=" + urllib.parse.quote(WA_TEXT)
 ADDRESS = "48 Rabe Street, Mokopane, Limpopo"
+# Hostinger referral link (MF Banda, 24/11/2026). Shown on /services/ and in the footer, disclosed as a referral link.
+HOSTING_REF = "https://www.hostinger.com?REFERRALCODE=1MALESELAFA69"
 # Cache-busting: asset URLs carry a content hash so browsers never pair new HTML with old CSS/JS.
 def _ver(rel): return hashlib.sha1(open(os.path.join(OUT, rel), "rb").read()).hexdigest()[:10]
 CSS_V, JS_V = _ver("assets/css/style.css"), _ver("assets/js/main.js")
@@ -84,7 +86,7 @@ FOOTER = f"""<footer class="site-footer"><div class="container">
 <div><a class="brand" href="/">{LOGO}<span class="brand-text"><strong>THINK MYBIZ</strong><span>TECH</span></span></a>
 <p style="margin-top:14px;max-width:320px">South African software engineering and business automation. Build · Automate · Integrate · Grow.</p>{SOCIAL_HTML}</div>
 <div><h4>Company</h4><ul><li><a href="/about/">About</a></li><li><a href="/how-we-work/">How we work</a></li><li><a href="/insights/">Insights</a></li><li><a href="/privacy/">Privacy &amp; POPIA</a></li></ul></div>
-<div><h4>What we do</h4><ul><li><a href="/services/">Services</a></li><li><a href="/solutions/">Industry solutions</a></li><li><a href="/taxnify/">Taxnify platform</a></li><li><a href="/pricing/">Engagements &amp; pricing</a></li></ul></div>
+<div><h4>What we do</h4><ul><li><a href="/services/">Services</a></li><li><a href="/solutions/">Industry solutions</a></li><li><a href="/taxnify/">Taxnify platform</a></li><li><a href="/pricing/">Engagements &amp; pricing</a></li><li><a href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Recommended hosting</a></li></ul></div>
 <div><h4>Contact</h4><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="tel:{TEL}">{PHONE}</a></li><li><a href="{WA_URL}" target="_blank" rel="noopener">WhatsApp {PHONE}</a></li><li>{ADDRESS}</li></ul></div>
 </div>
 <div class="footer-bottom"><span>© <span id="year">2026</span> Think Mybiz Tech. All rights reserved.</span>
@@ -280,7 +282,12 @@ pages.append(page("/", "Think Mybiz Tech | Custom Software, PWAs & Business Auto
 
 # ---------- Services ----------
 svc = hero("What we do","Our services","Services can be commissioned as a complete solution or combined into a phased digital transformation programme — from the first process review to a live, supported application.") + f"""
-<section class="section"><div class="container"><div class="grid g3">{service_cards()}</div></div></section>
+<section class="section"><div class="container"><div class="grid g3">{service_cards()}</div>
+<div class="card" style="margin-top:24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
+<div style="flex:1 1 320px"><h3 style="margin:0 0 .3em">Hosting your own website?</h3><p style="margin:0">We build and deploy on Hostinger. Get started with our referral link.</p>
+<p style="margin:.5em 0 0;font-size:.82rem;opacity:.75">Referral link: Think Mybiz Tech may earn a commission at no extra cost to you.</p></div>
+<a class="btn btn-primary" href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Get Hostinger hosting →</a></div>
+</div></section>
 <section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Specialist systems we deliver</span><h2>Proven building blocks for serious business software</h2></div>
 <div class="tags">{''.join(f'<span class="tag">{t}</span>' for t in SPECIALIST)}</div></div></section>
 <section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Digital transformation advisory</span><h2 style="margin:.35em 0 .4em">Not sure where to start?</h2>
