@@ -11,7 +11,9 @@ python3 _src/build.py      # regenerates every page, sitemap.xml, robots.txt, fa
 git add -A && git commit -m "…" && git push   # push to main = live within seconds
 ```
 
-Hand-edited files (not generated): `assets/css/style.css`, `assets/js/main.js`, `api/*.php`, `assets/img/*`, `assets/fonts/*`.
+Hand-edited files (not generated): `assets/css/style.css`, `assets/js/main.js`, `assets/js/track.js`, `api/*.php`, `portal/**` (except `portal/lib/catalogue.php`), `assets/img/*`, `assets/fonts/*`.
+
+Portfolio websites (`WEBSITES`) and the service catalogue with guide prices (`PACKAGES`) are defined once in `build.py`. The build writes the catalogue to `portal/lib/catalogue.php` for the Client Hub.
 
 ## Server-side pieces (PHP on Hostinger)
 
@@ -24,6 +26,26 @@ Hand-edited files (not generated): `assets/css/style.css`, `assets/js/main.js`, 
 | `insights/index.php` (generated) | Server-rendered Insights listing. |
 | `_src/make_covers.py` | Generates `assets/img/insights/<slug>.png` covers, used when a post has no featured image. |
 | `api/sitemap-insights.php` | `/sitemap-insights.xml` — every published post, listed in `robots.txt`. |
+
+## Client Hub (`/portal/`)
+
+PHP + MySQL application on the same hosting (same pattern as the Gesond members system).
+
+| Area | What it does |
+| --- | --- |
+| `/portal/?p=start` | Public "Start a project" form (optionally creates a client account). UTM/fbclid attribution is stored on the request. |
+| `/portal/` | Client log-in: requests, quotations (accept/decline online), invoices with EFT details, messages, profile. |
+| `/portal/admin/` | Staff: lead pipeline, clients, quotations, invoices, payments, messages, social posting, settings, audit log, CSV exports. |
+| `/portal/setup.php` | One-time install: creates tables, first admin, writes `../tmbt_private/portal-config.php` (outside public_html). Returns 404 afterwards. |
+| `/portal/cron.php` | CLI only. Hostinger cron every 15 min: `php ~/domains/thinkmybiztech.com/public_html/portal/cron.php` (publishes scheduled Facebook posts). |
+
+Accounting rules (see `portal/lib/docs.php`): integer cents, server-side totals, numbers assigned on issue from a locked counter, issued documents immutable, void only without payments, payments cannot exceed the balance and are reversed (never deleted), VAT only when registered with a VAT number. These are billing documents — capture issued invoices and payments in Taxnify (Admin → Invoices → Export).
+
+Website contact-form enquiries (`api/enquiry.php`) also flow into the hub's request pipeline when it is installed; the private log and email still work if it is not.
+
+Advertising tags (Meta Pixel, LinkedIn Insight, TikTok Pixel) are set in Admin → Settings → Tracking and load via `assets/js/track.js` **only after the visitor accepts marketing cookies**. Lead and CompleteRegistration events fire on submissions.
+
+Tests: `tests/` in the working session (not deployed) cover setup, leads, isolation between clients, quotation → deposit invoice → payments/reversal/void, VAT, messages and exports.
 
 Contact details, WhatsApp number and social profile URLs are constants at the top of `build.py` (`PHONE`, `TEL`, `WA_NUMBER`, `SOCIAL`). Add a social URL and rebuild to show it in the footer and in the Organization schema.
 

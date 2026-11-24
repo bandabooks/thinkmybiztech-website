@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /checkout/
 Disallow: /api/
+Disallow: /portal/
 Sitemap: https://thinkmybiztech.com/sitemap.xml
 Sitemap: https://thinkmybiztech.com/sitemap-insights.xml

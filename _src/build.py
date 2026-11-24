@@ -16,10 +16,10 @@ ADDRESS = "48 Rabe Street, Mokopane, Limpopo"
 HOSTING_REF = "https://www.hostinger.com?REFERRALCODE=1MALESELAFA69"
 # Cache-busting: asset URLs carry a content hash so browsers never pair new HTML with old CSS/JS.
 def _ver(rel): return hashlib.sha1(open(os.path.join(OUT, rel), "rb").read()).hexdigest()[:10]
-CSS_V, JS_V = _ver("assets/css/style.css"), _ver("assets/js/main.js")
+CSS_V, JS_V, TR_V = _ver("assets/css/style.css"), _ver("assets/js/main.js"), _ver("assets/js/track.js")
 OG_IMAGE = DOMAIN + "/assets/img/og-default.png"
 # Social profiles: add the real profile URL to switch a link on (footer + schema sameAs). Empty = hidden.
-SOCIAL = [("LinkedIn", ""), ("Facebook", ""), ("Instagram", ""), ("X", ""), ("YouTube", "")]
+SOCIAL = [("LinkedIn", ""), ("Facebook", ""), ("Instagram", ""), ("TikTok", ""), ("X", ""), ("YouTube", "")]
 SOCIAL_LIVE = [(n, u) for n, u in SOCIAL if u]
 WA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>'
 
@@ -67,7 +67,7 @@ I = {  # simple stroke icons
 }
 def icon(n): return f'<div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{I[n]}</svg></div>'
 
-NAV = [("Services","/services/"),("Solutions","/solutions/"),("Taxnify","/taxnify/"),("How we work","/how-we-work/"),
+NAV = [("Services","/services/"),("Solutions","/solutions/"),("Portfolio","/portfolio/"),("Taxnify","/taxnify/"),
        ("Pricing","/pricing/"),("Insights","/insights/"),("About","/about/")]
 
 def header(active):
@@ -77,7 +77,8 @@ def header(active):
 <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul class="nav-links">{items}
 <li class="cart-link" style="display:none"><a href="#" data-open-cart aria-label="Cart">Cart <span class="cart-count">0</span></a></li>
-<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/" style="color:#fff">Start a project</a></li></ul>
+<li class="nav-login"><a href="/portal/">Client login</a></li>
+<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/portal/?p=start" style="color:#fff">Start a project</a></li></ul>
 </div></header>"""
 
 SOCIAL_HTML = ('<div class="social">' + "".join(f'<a href="{u}" target="_blank" rel="noopener me">{n}</a>' for n, u in SOCIAL_LIVE) + "</div>") if SOCIAL_LIVE else ""
@@ -85,7 +86,7 @@ FOOTER = f"""<footer class="site-footer"><div class="container">
 <div class="footer-grid">
 <div><a class="brand" href="/">{LOGO}<span class="brand-text"><strong>THINK MYBIZ</strong><span>TECH</span></span></a>
 <p style="margin-top:14px;max-width:320px">South African software engineering and business automation. Build · Automate · Integrate · Grow.</p>{SOCIAL_HTML}</div>
-<div><h4>Company</h4><ul><li><a href="/about/">About</a></li><li><a href="/how-we-work/">How we work</a></li><li><a href="/insights/">Insights</a></li><li><a href="/privacy/">Privacy &amp; POPIA</a></li></ul></div>
+<div><h4>Company</h4><ul><li><a href="/about/">About</a></li><li><a href="/portfolio/">Portfolio</a></li><li><a href="/how-we-work/">How we work</a></li><li><a href="/portal/">Client login</a></li><li><a href="/insights/">Insights</a></li><li><a href="/privacy/">Privacy &amp; POPIA</a></li></ul></div>
 <div><h4>What we do</h4><ul><li><a href="/services/">Services</a></li><li><a href="/solutions/">Industry solutions</a></li><li><a href="/taxnify/">Taxnify platform</a></li><li><a href="/pricing/">Engagements &amp; pricing</a></li><li><a href="/hosting/">Hosting, domains &amp; email</a></li><li><a href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Recommended hosting</a></li></ul></div>
 <div><h4>Contact</h4><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="tel:{TEL}">{PHONE}</a></li><li><a href="{WA_URL}" target="_blank" rel="noopener">WhatsApp {PHONE}</a></li><li>{ADDRESS}</li></ul></div>
 </div>
@@ -98,7 +99,7 @@ FOOTER = f"""<footer class="site-footer"><div class="container">
 <button class="btn btn-primary" style="width:100%;justify-content:center" data-checkout>Proceed to checkout</button>
 <p style="font-size:.8rem;color:#6a7891;margin-top:10px">Secure checkout is hosted by Hostinger Ecommerce.</p></footer></aside>
 <a class="wa-float" href="{WA_URL}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" data-track="whatsapp">{WA_SVG}<span>WhatsApp us</span></a>
-<script src="/assets/js/main.js?v={JS_V}" defer></script>"""
+<script src="/assets/js/main.js?v={JS_V}" defer></script><script src="/assets/js/track.js?v={TR_V}" defer></script>"""
 
 def head(title, desc, canon, noindex=False, og_type="website", og_image=OG_IMAGE, extra=""):
     return f"""<!DOCTYPE html><html lang="en-ZA"><head><meta charset="utf-8">
@@ -197,6 +198,81 @@ PROJECTS = [("Fleet management system","Transport and logistics","Vehicle, drive
 def projects_html():
     return "".join(f'<div class="card"><span class="eyebrow">{s}</span><h3 style="margin:8px 0">{t}</h3><p>{d}</p></div>' for t,s,d in PROJECTS)
 
+# Websites in the portfolio. Facts are taken from each live site (checked 23/11/2026). Screenshots: assets/img/portfolio/.
+WEBSITES = [
+ {"key":"gesond","name":"Gesond Liquor Restaurant","url":"https://www.gesondlifestyle.co.za/","sector":"Hospitality &amp; events","logo":"gesond-logo.webp","logo_dark":True,
+  "summary":"Website and members platform for a liquor restaurant and events venue in Mapela, Limpopo.",
+  "built":["Event-led website with age gate","Gesond Rewards: member sign-up, log-in and points","Staff dashboard, inbox and member records","Facebook Page publishing from the dashboard","Installable Progressive Web App"]},
+ {"key":"thinkmybiz","name":"Think Mybiz Accountants","url":"https://thinkmybiz.co.za/","sector":"Accounting &amp; tax","logo":"thinkmybiz-logo.webp","group":True,
+  "summary":"Lead-generation website for a SARS-registered accounting and tax practice serving clients across South Africa.",
+  "built":["Service pages for tax, VAT, payroll and SARS disputes","Local landing pages for four service areas","Insights articles and SARS-letter guidance","Consultation enquiry form and WhatsApp","Search-engine structure and schema"]},
+ {"key":"rushfox","name":"Rush Fox Security &amp; CCTV","url":"https://rushfox.co.za/","sector":"Security services","logo":"rushfox-logo.svg",
+  "summary":"Company website for a PSiRA-registered security and CCTV company operating from Mokopane and Polokwane.",
+  "built":["Guarding, CCTV, access control and alarm service pages","Compliance page: PSiRA, B-BBEE, CSD and CIDB","Free site-assessment and quote requests","Security insights articles","Fast static build (Astro)"]},
+ {"key":"bandabookkeepers","name":"Banda Bookkeepers","url":"https://bandabookkeepers.com/","sector":"Bookkeeping","group":True,
+  "summary":"Website for the bookkeeping desk of Think Mybiz Accountants, built around fixed monthly packages.",
+  "built":["Service packages for sole traders to employers","Bookkeeping advice articles","Free consultation requests","WhatsApp and call-back contact","Mobile-first layout"]},
+]
+def site_host(u): return u.split("//",1)[1].rstrip("/").replace("www.","")
+def website_card(w, compact=False):
+    logo = (f'<span class="pf-logo{" dark" if w.get("logo_dark") else ""}"><img src="/assets/img/portfolio/{w["logo"]}" alt="{w["name"]} logo" loading="lazy"></span>') if w.get("logo") else f'<span class="pf-logo text">{w["name"]}</span>'
+    built = "" if compact else '<ul class="checks pf-built">' + "".join(f"<li>{b}</li>" for b in w["built"]) + "</ul>"
+    grp = '<span class="pf-group">Think Mybiz group</span>' if w.get("group") else ""
+    return f"""<article class="card pf-card"><a class="pf-shot" href="{w['url']}" target="_blank" rel="noopener" aria-label="Open {w['name']} website">
+<img src="/assets/img/portfolio/{w['key']}.webp" alt="Home page of the {w['name']} website" width="1200" height="750" loading="lazy">{logo}</a>
+<div class="pf-body"><div class="pf-meta"><span class="eyebrow">{w['sector']}</span>{grp}</div><h3>{w['name']}</h3><p>{w['summary']}</p>{built}
+<a class="pf-link" href="{w['url']}" target="_blank" rel="noopener">Visit {site_host(w['url'])} &#8599;</a></div></article>"""
+
+# Service catalogue and guide prices (ZAR). Single source: also written to portal/lib/catalogue.php for the client hub.
+# Guide prices set 23/11/2026 against published South African market ranges; MF Banda to confirm (see project doc).
+PACKAGES = [
+ {"id":"web-launch","group":"Websites","name":"Launch Page","price":2500,"unit":"once-off","for":"New businesses that need to be found and contacted.",
+  "inc":["One professional landing page","Enquiry form and WhatsApp button","Mobile-first, fast and secure (HTTPS)","Google-ready titles and descriptions"]},
+ {"id":"web-business","group":"Websites","name":"Business Website","price":7500,"unit":"once-off","rec":True,"for":"Established small businesses and practices.",
+  "inc":["Up to 8 pages written around your services","Enquiry form, WhatsApp and click-to-call","Search-engine structure, sitemap and schema","Google Business Profile set-up guidance","Privacy (POPIA) notice"]},
+ {"id":"web-growth","group":"Websites","name":"Growth Website","price":14500,"unit":"once-off","for":"Businesses that market actively and capture leads.",
+  "inc":["Up to 15 pages plus a blog / insights section","Local service-area landing pages","Lead capture into a private dashboard","Facebook, LinkedIn and TikTok links and sharing","Meta Pixel with POPIA consent"]},
+ {"id":"web-store","group":"Websites","name":"Online Store","price":16500,"unit":"once-off","for":"Selling products or fixed-price services online.",
+  "inc":["Product catalogue and cart","Hosted checkout (card / EFT, provider fees apply)","Order notifications","Up to 25 products loaded"]},
+ {"id":"app-portal","group":"Portals &amp; applications","name":"Client or Member Portal","price":25000,"unit":"from","rec":True,"for":"Registrations, members, bookings or client self-service.",
+  "inc":["Sign-up and secure log-in","Admin dashboard with roles","Records, messages and notifications","Audit trail and data export","Installable as an app (PWA)"]},
+ {"id":"app-custom","group":"Portals &amp; applications","name":"Custom Business Application","price":45000,"unit":"from","for":"Replacing spreadsheets and paper processes.",
+  "inc":["Discovery and written specification","Workflows, approvals and reporting","Private test site before go-live","Training and handover documentation"]},
+ {"id":"app-finance","group":"Portals &amp; applications","name":"Finance &amp; Compliance System","price":65000,"unit":"from","for":"Invoicing, payroll, POS, inventory or compliance registers.",
+  "inc":["Accounting-safe design: balanced postings and audit trails","VAT and payroll-tax aware","Integration with Taxnify or your existing system","Reconciliation and management reports"]},
+ {"id":"care-basic","group":"Hosting, care &amp; marketing","name":"Website Care","price":450,"unit":"per month","for":"Keeping a website safe, current and online.",
+  "inc":["Hosting management, SSL and backups","Security and software updates","Uptime monitoring","1 hour of changes per month"]},
+ {"id":"care-plus","group":"Hosting, care &amp; marketing","name":"Care Plus","price":950,"unit":"per month","rec":True,"for":"Sites and portals that change often.",
+  "inc":["Everything in Website Care","3 hours of changes per month","Monthly traffic and lead report","Priority response (next business day)"]},
+ {"id":"social-starter","group":"Hosting, care &amp; marketing","name":"Social Media Starter","price":2500,"unit":"per month","for":"A consistent presence on two platforms.",
+  "inc":["12 posts per month on 2 platforms","Branded graphics and captions","Content calendar for approval","Monthly performance summary"]},
+ {"id":"social-growth","group":"Hosting, care &amp; marketing","name":"Social Media &amp; Meta Ads","price":4500,"unit":"per month","for":"Generating enquiries with paid campaigns.",
+  "inc":["20 posts per month on up to 3 platforms","Meta (Facebook / Instagram) ad campaign management","Pixel and lead tracking set-up","Ad budget paid directly to Meta"]},
+ {"id":"advisory","group":"Hosting, care &amp; marketing","name":"Process Review &amp; Roadmap","price":3500,"unit":"once-off","for":"Not sure what to automate first.",
+  "inc":["Workflow and data review session","Automation priorities and quick wins","Written phased roadmap","Fee credited if you proceed within 60 days"]},
+]
+HOURLY_RATE = 550   # ad-hoc changes outside a care plan, per hour (excl. VAT)
+# PACKAGES prices are EXCLUDING VAT (the Client Hub adds VAT on quotes/invoices).
+# Think Mybiz is a VAT vendor (confirmed by MF Banda 23/11/2026), so advertised prices must include VAT:
+# VAT Act s65 / SARS VAT 404 — "all prices charged, advertised or quoted by a vendor must include VAT". Standard rate 15% (SARS, checked 23/11/2026).
+VAT_RATE_PCT = 15
+def incl_vat(n): return round(n * (100 + VAT_RATE_PCT)) / 100
+def rand(n):
+    whole = abs(n) == int(abs(n))
+    return "R" + (f"{n:,.0f}" if whole else f"{n:,.2f}").replace(",", " ")
+def package_cards(group):
+    out = ""
+    for k in [x for x in PACKAGES if x["group"] == group]:
+        unit = k["unit"]
+        p = rand(incl_vat(k["price"]))
+        price = (f'<small>from</small> {p}<small class="punit">incl. VAT</small>' if unit == "from" else f'{p}<small class="punit">{unit} · incl. VAT</small>')
+        badge = '<span class="badge">Most chosen</span>' if k.get("rec") else '<span class="badge" style="visibility:hidden">.</span>'
+        out += f"""<div class="card price-card">{badge}<h3 style="margin-top:12px">{k['name']}</h3><div class="price">{price}</div><p class="desc" style="flex:0">{k['for']}</p>
+<ul class="checks" style="margin:4px 0 20px;flex:1">{''.join(f'<li>{i}</li>' for i in k['inc'])}</ul>
+<a class="btn btn-outline" href="/portal/?p=start&amp;package={k['id']}">Request this package</a></div>"""
+    return out
+PKG_GROUPS = ["Websites", "Portals &amp; applications", "Hosting, care &amp; marketing"]
+
 DIFF = [("Accounting integrity","balanced double-entry postings, subledgers and reconciliations."),
  ("Tax awareness","VAT, PAYE, UIF, SDL and income tax treatment designed in."),
  ("Audit trails","who did what, when, and with whose approval."),
@@ -263,8 +339,10 @@ build client applications on, so every custom solution starts with secure sign-i
 <div class="grid g3">{pwa_html()}</div></div></section>
 
 <section class="section"><div class="container">
-<div class="section-head"><span class="eyebrow">Track record</span><h2>Selected project experience</h2></div>
-<div class="grid g4">{projects_html()}</div></div></section>
+<div class="section-head"><span class="eyebrow">Our work</span><h2>Websites and systems we have delivered</h2>
+<p class="lead">Live websites for hospitality, professional services and security businesses — plus applications for transport, mining and community organisations.</p></div>
+<div class="grid g4 pf-grid-compact">{''.join(website_card(w, True) for w in WEBSITES)}</div>
+<p style="margin-top:26px"><a class="btn btn-outline" href="/portfolio/">View the full portfolio</a></p></div></section>
 
 <section class="section alt"><div class="container">
 <div class="section-head"><span class="eyebrow">Any industry. Any niche.</span><h2>If a business runs a process, we can build the system for it</h2></div>
@@ -296,7 +374,7 @@ svc = hero("What we do","Our services","Services can be commissioned as a comple
 <div><ul class="checks" style="color:#d6e1f5"><li>Workflow and data review</li><li>Automation priorities and quick wins</li><li>Phased roadmap with clear scope</li><li>Build, buy or configure Taxnify — honest advice</li></ul></div></div></div></section>
 <section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Engineering standards</span><h2>Secure by design. Supported beyond launch.</h2>
 <p class="lead">Technology choices are guided by each application's requirements, data sensitivity and long-term maintainability — so your system is never locked to one developer.</p></div>
-<div class="tags" style="margin-bottom:28px">{''.join(f'<span class="tag">{t}</span>' for t in ["Node.js","React","TypeScript / JavaScript","PostgreSQL","REST APIs","Progressive Web Apps","Git version control","Cloud / VPS deployment"])}</div>
+<div class="tags" style="margin-bottom:28px">{''.join(f'<span class="tag">{t}</span>' for t in ["Node.js","React","TypeScript / JavaScript","PHP","MySQL / PostgreSQL","Astro","WordPress (headless)","REST APIs","Progressive Web Apps","Git version control","Hostinger cloud &amp; VPS"])}</div>
 <div class="grid g2">
 <div class="card">{icon("lock")}<h3>Access &amp; privacy</h3><p>User roles, least-privilege permissions, strict per-client data separation and POPIA-aligned processing.</p></div>
 <div class="card">{icon("chart")}<h3>Traceability &amp; control</h3><p>Audit logs, approvals, review stages, change history and evidence-backed reporting.</p></div>
@@ -313,6 +391,23 @@ sol = hero("Applications we build","Any industry. Any niche.","We are not limite
 {cta("Don't see your industry?","The catalogue shows the breadth of what we deliver, not the limit. Describe your process and we'll show you what it looks like as an application.")}"""
 pages.append(page("/solutions/","Industry Solutions | Custom Business Applications — Think Mybiz Tech",
   "Custom applications for finance, tax, payroll, retail, logistics, mining, community and sport, NGOs, property, health, education, agriculture and more.", sol, "/solutions/"))
+
+# ---------- Portfolio ----------
+pfp = hero("Portfolio","Work we have delivered","Live websites, client portals and business applications built and supported by Think Mybiz Tech. Open any project to see it working.", actions=False) + f"""
+<section class="section"><div class="container">
+<div class="section-head"><span class="eyebrow">Websites &amp; portals</span><h2>Live business websites</h2></div>
+<div class="grid g2 pf-grid">{''.join(website_card(w) for w in WEBSITES)}</div></div></section>
+<section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Applications</span><h2>Business systems and products</h2>
+<p class="lead">Client applications are private, so we describe them rather than link to them.</p></div>
+<div class="grid g4">{projects_html()}</div></div></section>
+<section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Your project next</span><h2 style="margin:.35em 0 .4em">Every project starts with a clear quotation</h2>
+<p>Tell us what you need. You get a written quotation in your client account, a private test site during the build, and invoices you can view and pay by EFT.</p>
+<a class="btn btn-primary" href="/portal/?p=start">Start a project</a></div>
+<div><ul class="checks" style="color:#d6e1f5"><li>Guide prices incl. VAT — see <a href="/pricing/" style="color:#fff;text-decoration:underline">pricing</a></li><li>Quotes, invoices and messages in one client account</li><li>You own your content and data</li></ul></div></div></div></section>{cta()}"""
+pages.append(page("/portfolio/","Portfolio | Websites, Portals & Applications — Think Mybiz Tech",
+  "Websites, client portals and business applications delivered by Think Mybiz Tech for hospitality, accounting, bookkeeping, security, transport, mining and community organisations.", pfp, "/portfolio/",
+  schema=[{"@context":"https://schema.org","@type":"ItemList","name":"Think Mybiz Tech portfolio","itemListElement":[
+    {"@type":"ListItem","position":i+1,"item":{"@type":"WebSite","name":w["name"].replace("&amp;","&"),"url":w["url"]}} for i,w in enumerate(WEBSITES)]}]))
 
 # ---------- Taxnify ----------
 tx = hero("A Think Mybiz Tech product","Taxnify — Account. Comply. Grow.","Our proprietary South African business and compliance operating system: accounting, tax, compliance, payroll, point of sale and business operations in one secure platform.", actions=False) + f"""
@@ -358,18 +453,27 @@ pages.append(page("/how-we-work/","How We Work | Delivery Process & Engagement M
   "Discover, define, design, engineer, validate, launch and operate. Managed dedicated solutions, custom build and handover, Taxnify integration and long-term partnerships.", hw, "/how-we-work/"))
 
 # ---------- Pricing ----------
-pr = hero("Engagements &amp; pricing","Clear scope. Clear pricing.","Custom software is priced against an agreed scope after a discovery conversation. Fixed-price services can be paid for online below.", actions=False) + f"""
+pr = hero("Pricing","Clear packages. Written quotations.","Guide prices in South African rand, including VAT, for our most requested services. Every engagement is confirmed in a written quotation before work starts.", actions=False) + f"""
 <section class="section"><div class="container">
-<div class="section-head"><span class="eyebrow">Fixed-price services</span><h2>Buy and pay online</h2></div>
-<div id="store-note" class="notice" style="display:none">Online packages are being finalised. In the meantime, <a href="/contact/">request a quote</a> and we'll send a formal proposal and invoice.</div>
-<div class="grid g3" id="store-grid"><p class="loading">Loading packages…</p></div>
+<div class="section-head"><span class="eyebrow">Websites</span><h2>Websites that bring in enquiries</h2></div>
+<div class="grid g4">{package_cards("Websites")}</div></div></section>
+<section class="section alt"><div class="container">
+<div class="section-head"><span class="eyebrow">Portals &amp; applications</span><h2>Systems that run your business</h2>
+<p class="lead">Applications are priced against an agreed specification. The figure shown is where typical projects start.</p></div>
+<div class="grid g3">{package_cards("Portals &amp; applications")}</div></div></section>
+<section class="section"><div class="container">
+<div class="section-head"><span class="eyebrow">Hosting, care &amp; marketing</span><h2>Ongoing support and growth</h2></div>
+<div class="grid g3">{package_cards("Hosting, care &amp; marketing")}</div>
+<div class="notice" style="margin-top:26px"><strong>How pricing works.</strong> All prices are in South African rand and <strong>include VAT at {VAT_RATE_PCT}%</strong>. Your written quotation confirms the final scope and price and shows the VAT separately.
+Once-off projects: 50% deposit to start and the balance at go-live. Monthly plans are billed in advance and can be cancelled with one month's notice.
+Changes outside a care plan are billed at {rand(incl_vat(HOURLY_RATE))} per hour incl. VAT. Third-party costs (domains, paid plugins, payment-gateway fees, advertising spend) are passed on at cost.</div>
 </div></section>
-<section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Custom engagements</span><h2>Quoted against your requirements</h2>
+<section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Custom engagements</span><h2>Choose how you want to own and run your system</h2>
 <p class="lead">Every proposal specifies deliverables, acceptance criteria, service levels, data ownership and exit arrangements.</p></div>
 <div class="grid g4">{engagement_cards()}</div></div></section>
 <section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Taxnify subscriptions</span><h2 style="margin:.35em 0 .4em">Looking for Taxnify plans?</h2>
 <p>Taxnify subscriptions are managed on the Taxnify website.</p><a class="btn btn-primary" href="https://www.taxnify.co.za" rel="noopener">View Taxnify</a></div>
-<div><ul class="checks" style="color:#d6e1f5"><li>Fixed-price services: secure hosted checkout</li><li>Prices in South African rand</li><li>Custom work: formal proposal before any commitment</li></ul></div></div></div></section>"""
+<div><ul class="checks" style="color:#d6e1f5"><li>Request any package from your client account</li><li>Quotation, invoices and payments tracked in one place</li><li>EFT payment with your invoice number as reference</li></ul></div></div></div></section>"""
 # ---------- Hosting, domains & email ----------
 HOST_MANAGED = [
  ("globe","Domain registration &amp; DNS","Hosting, domains and email",
@@ -398,7 +502,7 @@ pages.append(page("/hosting/","Hosting, Domains, Email & VPS | Think Mybiz Tech"
   "Domain registration, managed website hosting, business email and VPS servers from Think Mybiz Tech, or get hosting directly from Hostinger.", hst, "/hosting/"))
 
 pages.append(page("/pricing/","Pricing & Engagements | Think Mybiz Tech",
-  "Fixed-price services you can pay for online, and custom software engagements quoted against your requirements.", pr, "/pricing/", "pricing"))
+  "Guide prices in rand (incl. VAT) for websites, client portals, business applications, website care, social media and Meta advertising management. Every engagement confirmed in a written quotation.", pr, "/pricing/", "pricing"))
 
 # ---------- Insights ----------
 ins = hero("Insights","Software, automation and compliance — practical thinking","Articles from the Think Mybiz Tech team on building trustworthy business systems in South Africa.", actions=False) + """
@@ -442,6 +546,7 @@ _body = f"""<body data-page="article">{header("/insights/")}<main>
 <div class="meta"><time datetime="<?= $e($date) ?>"><?= $e(date('j F Y', strtotime($date))) ?></time></div>
 <?php if ($img !== ''): ?><img src="<?= $e($img) ?>" alt="" style="width:100%;border-radius:14px;margin:18px 0" loading="eager"><?php endif; ?>
 <div class="content"><?= $post['content']['rendered'] ?></div>
+<div class="share"><strong style="align-self:center;font-size:.85rem">Share:</strong><?php $su = rawurlencode($canon); $st = rawurlencode($title); ?><a target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url=<?= $su ?>">LinkedIn</a><a target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=<?= $su ?>">Facebook</a><a target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?url=<?= $su ?>&amp;text=<?= $st ?>">X</a><a target="_blank" rel="noopener" href="https://wa.me/?text=<?= $st ?>%20<?= $su ?>">WhatsApp</a></div>
 <?php else: ?>
 <h1 style="margin-top:14px"><?= $e($title) ?></h1>
 <p class="notice"><?= $post === false ? 'This article is temporarily unavailable. Please try again shortly.' : 'That article could not be found.' ?> <a href="/insights/">View all insights</a>.</p>
@@ -499,7 +604,7 @@ ct = hero("Let's build together","Tell us what you want to automate","Describe t
 <a class="wa" href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp"><div class="icon">{WA_SVG}</div>WhatsApp</a>
 <a href="mailto:{EMAIL}" data-track="email">{icon("mail")}Email</a></div></div>
 <section class="section"><div class="container grid g2" style="gap:40px;align-items:start">
-<div class="card"><form id="enquiry" class="form" action="/api/enquiry.php" method="post" novalidate>
+<div class="card"><form id="enquiry" class="form" action="/api/enquiry.php" method="post" novalidate data-utm>
 <div class="hp" aria-hidden="true"><label for="website">Leave this field empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
 <input type="hidden" name="ts" id="ts"><input type="hidden" name="page" id="page">
 <div class="row"><div><label for="name">Full name</label><input id="name" name="name" required autocomplete="name"></div>
@@ -513,7 +618,7 @@ ct = hero("Let's build together","Tell us what you want to automate","Describe t
 <button class="btn btn-primary" type="submit">Send enquiry</button>
 <div id="enquiry-ok" class="notice ok" style="display:none" role="status"></div>
 <div id="enquiry-err" class="notice err" style="display:none" role="alert"></div>
-<p style="font-size:.8rem;color:var(--muted)">Prefer to chat? <a href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp">WhatsApp {PHONE}</a>.</p>
+<p style="font-size:.8rem;color:var(--muted)">Need a quotation you can accept online? <a href="/portal/?p=start">Start a project in the Client Hub</a>. Prefer to chat? <a href="{WA_URL}" target="_blank" rel="noopener" data-track="whatsapp">WhatsApp {PHONE}</a>.</p>
 </form></div>
 <div><div class="card">
 <div class="contact-item">{icon("mail")}<div><small>Email</small><a href="mailto:{EMAIL}">{EMAIL}</a></div></div>
@@ -535,11 +640,11 @@ pv = hero("Privacy","Privacy &amp; POPIA notice","How this website handles perso
 <section class="section"><div class="container"><div class="article"><div class="content">
 <p>Think Mybiz Tech respects your privacy and processes personal information in line with the Protection of Personal Information Act, 2013 (POPIA).</p>
 <h3>Responsible party</h3><p>Think Mybiz Tech, {ADDRESS}. Information Officer: MF Banda — <a href="mailto:{EMAIL}">{EMAIL}</a>, {PHONE}.</p>
-<h3>What we collect</h3><p>When you contact us or place an order, we receive the details you choose to give us — such as your name, company, email address, phone number and project information. When you submit the enquiry form we also record the date and time and a one-way coded version of your internet address, used only to prevent spam and abuse. Orders are processed through Hostinger Ecommerce's hosted checkout.</p>
-<h3>Where it is kept</h3><p>Enquiries are stored in a private area of our website hosting and sent to our business mailbox. Our website, email and store are hosted by Hostinger, which processes information on our behalf as an operator; its servers may be located outside South Africa. If you contact us on WhatsApp, the conversation is also subject to WhatsApp's own terms and privacy policy.</p>
-<h3>How we use it</h3><p>We use your information only to respond to enquiries, prepare proposals, deliver services you have ordered, issue invoices and meet our legal obligations. We do not sell your personal information.</p>
-<h3>How long we keep it</h3><p>We keep enquiry information only for as long as we need it to respond, prepare and manage any resulting engagement, and meet our legal and record-keeping obligations. Enquiries that do not lead to an engagement are deleted when they are no longer needed.</p>
-<h3>Cookies and tracking</h3><p>This website does not use advertising cookies. Your browser stores your shopping cart locally so it is kept between visits.</p>
+<h3>What we collect</h3><p>When you contact us, request a project, open a client account or place an order, we receive the details you choose to give us — such as your name, company, email address, phone number and project information. When you submit the enquiry form we also record the date and time and a one-way coded version of your internet address, used only to prevent spam and abuse. Orders are processed through Hostinger Ecommerce's hosted checkout. If you open a client account we also keep your account details, project requests, messages, quotations, invoices and payment records, and a log of important actions (such as accepting a quotation) for security and audit purposes.</p>
+<h3>Where it is kept</h3><p>Enquiries and client-account records are stored in a private area and database on our website hosting and sent to our business mailbox. Passwords are stored only in a one-way encrypted (hashed) form. Our website, email and store are hosted by Hostinger, which processes information on our behalf as an operator; its servers may be located outside South Africa. If you contact us on WhatsApp, the conversation is also subject to WhatsApp's own terms and privacy policy.</p>
+<h3>How we use it</h3><p>We use your information only to respond to enquiries, prepare quotations and proposals, deliver services you have ordered, issue invoices, record payments and meet our legal obligations, including tax record-keeping. We send marketing messages only if you opt in, and you can opt out at any time. We do not sell your personal information.</p>
+<h3>How long we keep it</h3><p>We keep enquiry information only for as long as we need it to respond, prepare and manage any resulting engagement, and meet our legal and record-keeping obligations. Invoices and payment records are kept for at least five years as required by South African tax law. Enquiries that do not lead to an engagement are deleted when they are no longer needed.</p>
+<h3>Cookies and tracking</h3><p>Essential cookies keep you logged in to the Client Hub. We remember which campaign or website referred you (for example a Facebook advert) so we can see which marketing works; this is stored in your own browser and attached only to requests you submit. Advertising cookies from Meta (Facebook and Instagram), LinkedIn and TikTok are used <strong>only if you click "Accept"</strong> on the cookie notice. They let these platforms measure our adverts and may involve transfer of information to those companies outside South Africa under their own privacy policies. You can change your choice at any time: <a href="#" data-consent-reset>reset cookie preferences</a>. Your browser also stores your shopping cart locally.</p>
 <h3>Your rights</h3><p>You may ask to access, correct or delete the personal information we hold about you, or object to its processing, by emailing <a href="mailto:{EMAIL}">{EMAIL}</a>. You may also lodge a complaint with the Information Regulator (South Africa) at <a href="https://inforegulator.org.za" rel="noopener">inforegulator.org.za</a>.</p>
 <h3>Client systems</h3><p>Data held in applications we build or host for clients belongs to those clients. Each client's data is kept strictly separate and handled under the terms of its service agreement.</p>
 <h3>Contact</h3><p>Questions about this notice: <a href="mailto:{EMAIL}">{EMAIL}</a> · {PHONE} · {ADDRESS}.</p>
@@ -557,12 +662,22 @@ page("/404.html","Page not found | Think Mybiz Tech","Page not found.",
   hero("404","We couldn't find that page","The page may have moved. Try one of the links above, or go back home.", actions=False) +
   '<section class="section"><div class="container"><a class="btn btn-primary" href="/">Back to home</a></div></section>', noindex=True)
 
+# ---------- Client Hub catalogue (single source: PACKAGES above) ----------
+def _php(v):
+    if isinstance(v, bool): return "true" if v else "false"
+    if isinstance(v, (int, float)): return str(v)
+    if isinstance(v, list): return "[" + ", ".join(_php(x) for x in v) + "]"
+    if isinstance(v, dict): return "[" + ", ".join(f"{_php(k)} => {_php(x)}" for k, x in v.items()) + "]"
+    return "'" + str(v).replace("\\", "\\\\").replace("'", "\\'") + "'"
+open(os.path.join(OUT, "portal", "lib", "catalogue.php"), "w").write("<?php\n/* GENERATED by _src/build.py from PACKAGES — do not hand-edit. Guide prices in rand. */\nreturn " +
+  _php([{"id": k["id"], "group": k["group"], "name": k["name"], "price": k["price"], "unit": k["unit"], "inc": k["inc"]} for k in PACKAGES]) + ";\n")
+
 # ---------- SEO files ----------
 today = datetime.date.today().isoformat()
 public = [p for p in pages if "checkout" not in p]
 open(os.path.join(OUT,"sitemap.xml"),"w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   "".join(f"<url><loc>{DOMAIN}{p}</loc><lastmod>{today}</lastmod></url>\n" for p in public) + "</urlset>\n")
-open(os.path.join(OUT,"robots.txt"),"w").write(f"User-agent: *\nAllow: /\nDisallow: /checkout/\nDisallow: /api/\nSitemap: {DOMAIN}/sitemap.xml\nSitemap: {DOMAIN}/sitemap-insights.xml\n")
+open(os.path.join(OUT,"robots.txt"),"w").write(f"User-agent: *\nAllow: /\nDisallow: /checkout/\nDisallow: /api/\nDisallow: /portal/\nSitemap: {DOMAIN}/sitemap.xml\nSitemap: {DOMAIN}/sitemap-insights.xml\n")
 open(os.path.join(OUT,"favicon.svg"),"w").write(LOGO.replace('aria-hidden="true"','xmlns="http://www.w3.org/2000/svg"'))
 open(os.path.join(OUT,".htaccess"),"w").write("""Options -Indexes
 RedirectMatch 404 /\\.(git|gitignore)

@@ -1,0 +1,7 @@
+# Client Hub: library files and the cron script are never served over the web.
+RedirectMatch 404 ^/portal/lib/
+RedirectMatch 404 ^/portal/cron\.php$
+<IfModule mod_headers.c>
+Header always set X-Robots-Tag "noindex, nofollow"
+Header always set Cache-Control "no-store"
+</IfModule>
