@@ -86,7 +86,7 @@ FOOTER = f"""<footer class="site-footer"><div class="container">
 <div><a class="brand" href="/">{LOGO}<span class="brand-text"><strong>THINK MYBIZ</strong><span>TECH</span></span></a>
 <p style="margin-top:14px;max-width:320px">South African software engineering and business automation. Build · Automate · Integrate · Grow.</p>{SOCIAL_HTML}</div>
 <div><h4>Company</h4><ul><li><a href="/about/">About</a></li><li><a href="/how-we-work/">How we work</a></li><li><a href="/insights/">Insights</a></li><li><a href="/privacy/">Privacy &amp; POPIA</a></li></ul></div>
-<div><h4>What we do</h4><ul><li><a href="/services/">Services</a></li><li><a href="/solutions/">Industry solutions</a></li><li><a href="/taxnify/">Taxnify platform</a></li><li><a href="/pricing/">Engagements &amp; pricing</a></li><li><a href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Recommended hosting</a></li></ul></div>
+<div><h4>What we do</h4><ul><li><a href="/services/">Services</a></li><li><a href="/solutions/">Industry solutions</a></li><li><a href="/taxnify/">Taxnify platform</a></li><li><a href="/pricing/">Engagements &amp; pricing</a></li><li><a href="/hosting/">Hosting, domains &amp; email</a></li><li><a href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Recommended hosting</a></li></ul></div>
 <div><h4>Contact</h4><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="tel:{TEL}">{PHONE}</a></li><li><a href="{WA_URL}" target="_blank" rel="noopener">WhatsApp {PHONE}</a></li><li>{ADDRESS}</li></ul></div>
 </div>
 <div class="footer-bottom"><span>© <span id="year">2026</span> Think Mybiz Tech. All rights reserved.</span>
@@ -286,7 +286,7 @@ svc = hero("What we do","Our services","Services can be commissioned as a comple
 <div class="card" style="margin-top:24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
 <div style="flex:1 1 320px"><h3 style="margin:0 0 .3em">Hosting your own website?</h3><p style="margin:0">We build and deploy on Hostinger. Get started with our referral link.</p>
 <p style="margin:.5em 0 0;font-size:.82rem;opacity:.75">Referral link: Think Mybiz Tech may earn a commission at no extra cost to you.</p></div>
-<a class="btn btn-primary" href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Get Hostinger hosting →</a></div>
+<div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn-primary" href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Get Hostinger hosting →</a><a class="btn btn-outline" href="/hosting/">Or let us manage it</a></div></div>
 </div></section>
 <section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Specialist systems we deliver</span><h2>Proven building blocks for serious business software</h2></div>
 <div class="tags">{''.join(f'<span class="tag">{t}</span>' for t in SPECIALIST)}</div></div></section>
@@ -370,6 +370,33 @@ pr = hero("Engagements &amp; pricing","Clear scope. Clear pricing.","Custom soft
 <section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Taxnify subscriptions</span><h2 style="margin:.35em 0 .4em">Looking for Taxnify plans?</h2>
 <p>Taxnify subscriptions are managed on the Taxnify website.</p><a class="btn btn-primary" href="https://www.taxnify.co.za" rel="noopener">View Taxnify</a></div>
 <div><ul class="checks" style="color:#d6e1f5"><li>Fixed-price services: secure hosted checkout</li><li>Prices in South African rand</li><li>Custom work: formal proposal before any commitment</li></ul></div></div></div></section>"""
+# ---------- Hosting, domains & email ----------
+HOST_MANAGED = [
+ ("globe","Domain registration &amp; DNS","Hosting, domains and email",
+  ["Search, registration and transfers (.co.za, .com and more)","Renewals tracked so your domain never lapses","DNS set up for your website and email"]),
+ ("cloud","Managed website hosting","Hosting, domains and email",
+  ["Hosting set up and your website deployed","SSL certificate and HTTPS","Backups, monitoring and security updates"]),
+ ("mail","Business email","Hosting, domains and email",
+  ["Professional addresses on your own domain","Mailboxes set up on phones and computers","SPF, DKIM and DMARC records configured"]),
+ ("lock","Managed VPS &amp; servers","Managed VPS",
+  ["Server sized for your application","Separate test and production environments","Monitoring, updates and backups"]),
+]
+def host_card(ic,t,svc,items):
+    return (f'<div class="card">{icon(ic)}<h3>{t}</h3><ul class="checks" style="margin:14px 0 18px">'
+            + "".join(f"<li>{i}</li>" for i in items)
+            + f'</ul><a class="btn btn-outline" href="/contact/?service={svc}">Request a quote</a></div>')
+hst = hero("Hosting, domains &amp; email","Get online. Stay online.","Domains, website hosting, business email and VPS servers: managed for you by our team, or set up yourself on Hostinger.", actions=False) + f"""
+<section class="section"><div class="container"><div class="section-head"><span class="eyebrow">Managed by Think Mybiz Tech</span><h2>We set it up and look after it</h2>
+<p class="lead">One point of contact for your domain, hosting and email. Quoted in South African rand, with once-off setup and monthly or annual fees agreed upfront.</p></div>
+<div class="grid g2">{''.join(host_card(*h) for h in HOST_MANAGED)}</div></div></section>
+<section class="section alt"><div class="container"><div class="band"><div><span class="eyebrow light">Prefer to do it yourself?</span><h2 style="margin:.35em 0 .4em">Get hosting directly from Hostinger</h2>
+<p>We build and deploy on Hostinger. Sign up with our referral link for web hosting, cloud hosting, VPS or business email, and manage it in your own account.</p>
+<a class="btn btn-primary" href="{HOSTING_REF}" target="_blank" rel="sponsored noopener noreferrer">Get Hostinger hosting →</a>
+<p style="margin-top:12px;font-size:.82rem;opacity:.8">Referral link: Think Mybiz Tech may earn a commission at no extra cost to you. Hostinger bills and supports these plans directly.</p></div>
+<div><ul class="checks" style="color:#d6e1f5"><li>Web and WordPress hosting</li><li>Cloud hosting</li><li>VPS hosting</li><li>Business email</li></ul></div></div></div></section>{cta("Not sure what you need?","Tell us about your website, email or application and we'll recommend the right setup, managed or do-it-yourself.")}"""
+pages.append(page("/hosting/","Hosting, Domains, Email & VPS | Think Mybiz Tech",
+  "Domain registration, managed website hosting, business email and VPS servers from Think Mybiz Tech, or get hosting directly from Hostinger.", hst, "/hosting/"))
+
 pages.append(page("/pricing/","Pricing & Engagements | Think Mybiz Tech",
   "Fixed-price services you can pay for online, and custom software engagements quoted against your requirements.", pr, "/pricing/", "pricing"))
 
@@ -464,7 +491,7 @@ pages.append(page("/about/","About Think Mybiz Tech | Software Built by Complian
   "Think Mybiz Tech is a South African software engineering and business automation company led by founder MF Banda, with roots in accounting, tax and compliance.", ab, "/about/", schema=[ORG_LD]))
 
 # ---------- Contact ----------
-opts = ["Custom application / PWA","Website or portal","Business automation / AI","Data, database or integration","Cloud hosting &amp; support",
+opts = ["Custom application / PWA","Website or portal","Business automation / AI","Data, database or integration","Cloud hosting &amp; support","Hosting, domains &amp; email","Managed VPS / server",
         "Compliance &amp; finance system","Taxnify configuration and integration","Digital transformation advisory","Other"]
 ct = hero("Let's build together","Tell us what you want to automate","Describe the process or application you need. We'll respond with a practical proposal.", actions=False) + f"""
 <div class="container"><div class="quick-contact" aria-label="Quick contact">
